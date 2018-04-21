@@ -174,14 +174,14 @@ void Wanderer::tick() {
   y += dy;
   z += dz;
 
-  // is that a modulus? no, it's a bunch of while loops.
-  if (x < 0) { x = 0; }
-  if (y < 0) {y = 0; }
-  if (z < 0) { z = 0; }
+  // bounce
+  if (x < 0) { x = 0; dx = -dx; }
+  if (y < 0) { y = 0; dy = -dy; }
+  if (z < 0) { z = 0; dz = -dz; }
   
-  if (x >= 7) { x = 7; }
-  if (y >= 7) { y = 7; }
-  if (z >= 7) { z = 7; }
+  if (x >= 7) { x = 7; dx = -dx; }
+  if (y >= 7) { y = 7; dy = -dy; }
+  if (z >= 7) { z = 7; dz = -dz; }
 }
 
 CRGB getPixel(int x, int y, int z) {
