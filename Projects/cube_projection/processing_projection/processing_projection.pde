@@ -23,7 +23,7 @@ Serial port;
 import processing.video.*;
 Capture cam;
 
-//Debugging image
+//Display image
 PImage img;
 
 // list of LEDs (sorry this is poorly named, these are the LEDs)
@@ -103,7 +103,7 @@ void draw() {
   float fov = 10*DEG_TO_RAD;
   
   //compute optimal fov
-  float edgeLength = ledsPerEdge * cmBetweenLEDs;
+  float edgeLength = (ledsPerEdge-1) * cmBetweenLEDs;
   float centerToCornerDist = dist(0,0,0,edgeLength/2,edgeLength/2,edgeLength/2);
   fov = tan(centerToCornerDist/cmCameraToCube) / 1.7; //1.7 is just a number I happened to pick
   
