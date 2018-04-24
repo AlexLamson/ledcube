@@ -91,7 +91,7 @@ void drawSmoothedPixel(float x, float y, float z, CRGB color) {
           float compX = x - i, compY  = y - j, compZ = z - k;
           float dist = sqrt( pow(compX, 2) + pow(compY, 2) + pow(compZ, 2) );
           
-          float normBrightness = max(0, 1.0-dist);
+          float normBrightness = max(0.0, 1.0-dist);
           byte brightness = mapBrightness(normBrightness);
 
           byte cx = i, cy = j, cz = k;
