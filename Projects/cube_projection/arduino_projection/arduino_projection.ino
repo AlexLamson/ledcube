@@ -40,7 +40,8 @@ void setup() {
   FastLED.addLeds<WS2812B, DATA2>(leds, 256, 128);
   FastLED.addLeds<WS2812B, DATA3>(leds, 384, 128);
 
-  Serial.begin(115200);
+//  Serial.begin(115200);
+  Serial.begin(921600);
 
   FastLED.setBrightness(64);
   clear();

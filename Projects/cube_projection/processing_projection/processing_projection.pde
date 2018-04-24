@@ -4,7 +4,7 @@ such that it is visible when the cube is viewed from a certain angle
 */
 
 
-boolean usePort = false; //set this to false if you aren't displaying it on the physical cube
+boolean usePort = true; //set this to false if you aren't displaying it on the physical cube
 boolean useImage = true; //true = show image, false = show webcam
 //to change the image, change the start of the setup function
 
@@ -12,7 +12,7 @@ int ledsPerEdge = 8; //number of LEDs per edge
 float cmBetweenLEDs = 3.5;
 float cmCameraToCube = 100;
 boolean spinCube = true;
-float cubeSpinSpeed = 10;//1=slow, 10=fast
+float cubeSpinSpeed = 100;//1=slow, 10=fast
 
 
 //Serial
@@ -72,7 +72,7 @@ void setup() {
 
   //open a port so we can use our serial connection to communicate to the physical cube
   if(usePort) {
-    port = new Serial(this, Serial.list()[0], 115200); // open port
+    port = new Serial(this, Serial.list()[0], 921600); // open port
   }
 
 
@@ -105,21 +105,35 @@ void draw() {
   //compute optimal fov
   float edgeLength = (ledsPerEdge-1) * cmBetweenLEDs;
   float centerToCornerDist = dist(0,0,0,edgeLength/2,edgeLength/2,edgeLength/2);
+
   fov = tan(centerToCornerDist/cmCameraToCube) / 1.7; //1.7 is just a number I happened to pick
   
   perspective(fov, width/(float)height, 0.1, 1000);
 
 
-  //angle at which the cube should be viewed (currently on the right side of the data input wires)
-  float mX = 0.1453125; //map(mouseX,0,width,0,1);
-  float mY = 0.37222221; //map(mouseY,0,height,0,1);
+  //angle at which the cube should be viewed (currently on the )
+  
+  //face to the right of the data input wires
+  //float mX = 0.1453125; //map(mouseX,0,width,0,1);
+  //float mY = 0.37222221; //map(mouseY,0,height,0,1);
+  
+  //right corner of data input wires
+  float mX = -0.27499998;//map(mouseX,0,width,-1,1);
+  float mY = 0.4333332;//map(mouseY,0,height,-1,1);
+
+  //float mX = map(mouseX,0,width,-1,1);
+  //float mY = map(mouseY,0,height,-1,1);
+  
+  //println(mX+","+mY);
   rotateX(mY*PI);
   rotateZ(mX*PI);
 
   // Slowly spin the cube
   if(spinCube) {
-    rotateX(frameCount * 0.001 * cubeSpinSpeed);
-    rotateY(frameCount * 0.002 * cubeSpinSpeed);
+    //rotateX(frameCount * 0.001 * cubeSpinSpeed);
+    //rotateY(frameCount * 0.002 * cubeSpinSpeed);
+    //rotateZ(frameCount * 0.001 * cubeSpinSpeed);
+
     rotateZ(frameCount * 0.001 * cubeSpinSpeed);
   }
 
