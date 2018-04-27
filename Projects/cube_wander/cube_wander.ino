@@ -42,10 +42,8 @@ class Wanderer {
     CRGB color;
 };
 
-//const int numWanderers = 1;
-//Wanderer wanderers[numWanderers] = {Wanderer( CRGB(0, 64, 255) )};
-Wanderer wanderer = Wanderer( CRGB(0, 64, 255) );
-Wanderer wanderer1= Wanderer( CRGB(255, 0, 255) );
+const int numWanderers = 8;
+Wanderer wanderers[numWanderers];
 
 const float momentum = 0.95;
 
@@ -61,6 +59,10 @@ void setup() {
 
   Serial.begin(115200);
 
+  for (byte i = 0; i < numWanderers; i++) {
+    wanderers[i] = Wanderer( CHSV( random(256), 128, 255 ) );
+  }
+
   clear();
 }
 
@@ -71,19 +73,22 @@ void loop() {
     
     clear();
 
-//    for (int i = 0; i < numWanderers; i++) {
+    for (int i = 0; i < numWanderers; i++) {
 //      Wanderer wanderer = (wanderers[i]);
       
+      wanderers[i].tick();
+      
+//      Serial.print(wanderers[i].x);
+//      Serial.print(" ");
+//      Serial.print(wanderers[i].y);
+//      Serial.print(" ");
+//      Serial.print(wanderers[i].z);
+//      Serial.print(" ");
   
-      drawSmoothedPixel(wanderer.x, wanderer.y, wanderer.z, wanderer.color);
-      drawSmoothedPixel(wanderer1.x,wanderer1.y,wanderer1.z, wanderer1.color);
-//    }
+      drawSmoothedPixel(wanderers[i].x, wanderers[i].y, wanderers[i].z, wanderers[i].color);
+    }
     
     FastLED.show();
-
-    Serial.print(0);
-    Serial.print(" ");
-    Serial.println(8);
   }
 }
 
