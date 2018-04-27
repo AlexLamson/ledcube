@@ -60,7 +60,7 @@ void setup() {
   Serial.begin(115200);
 
   for (byte i = 0; i < numWanderers; i++) {
-    wanderers[i] = Wanderer( CHSV( random(256), 128, 255 ) );
+    wanderers[i] = Wanderer( CHSV( random(256), 255, 255 ) );
   }
 
   clear();
