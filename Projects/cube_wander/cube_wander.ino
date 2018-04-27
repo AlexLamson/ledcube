@@ -74,15 +74,6 @@ void loop() {
 //    for (int i = 0; i < numWanderers; i++) {
 //      Wanderer wanderer = (wanderers[i]);
       
-      wanderer.tick();
-      wanderer1.tick();
-      
-      Serial.print(wanderer.x);
-      Serial.print(" ");
-      Serial.print(wanderer.y);
-      Serial.print(" ");
-      Serial.print(wanderer.z);
-      Serial.print(" ");
   
       drawSmoothedPixel(wanderer.x, wanderer.y, wanderer.z, wanderer.color);
       drawSmoothedPixel(wanderer1.x,wanderer1.y,wanderer1.z, wanderer1.color);
