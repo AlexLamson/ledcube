@@ -102,6 +102,8 @@ void setup() {
   FastLED.addLeds<WS2812B, DATA2>(leds, 256, 128);
   FastLED.addLeds<WS2812B, DATA3>(leds, 384, 128);
 
+//  Serial.begin(115200);
+  Serial.begin(921600);
 
 //  FastLED.setBrightness(64);
   clear();
@@ -145,7 +147,7 @@ void loop() {
       if (demoMode == 0) demoMode = 1;
       switch (demoMode) {
         case 1: beginRain(); break;
-//        case 3: beginWander();
+        case 3: beginWander();
       }
     }
     
