@@ -167,8 +167,20 @@ void loop() {
         break;
         
         case 2: // colors
-        hue++;
-        setColor( CHSV( hue, 255, value ) );
+        hue += 2;
+//        setColor( CHSV( hue, 255, value ) );
+        for (byte i = 0; i < 8; i++) {
+          for (byte j = 0; j < 8; j++) {
+            for (byte k = 0; k < 8; k++) {
+              float dx = float(i) - 3.5;
+              float dy = float(j) - 3.5;
+              float dz = float(k) - 3.5;
+              float dist = sqrt( pow(dx, 2) + pow(dy, 2) + pow(dz, 2) );
+              float offset = dist / 4.0;
+              leds[ getIndex( i, j, k ) ] = CHSV( hue - byte(offset * 128), 255, value);
+            }
+          }
+        }
         break;
         
         case 3: // wander
