@@ -10,7 +10,12 @@ int startTime = 0;
 int slideDuration = 500;
 int letterDuration = 1500;
 
-boolean useText = true;
+/*
+ * 0 = show text message
+ * 1 = show a series of symbols
+ * 2 = show current time
+*/
+int displayMode = 0;
 
 String[] imageFilenames = "anchor.png,circle.png,crown.png,diamond.png,dollar.png,down.png,heart.png,horseshoe.png,moon.png,peace.png,plus.png,raindrop.png,star.png".split(",");
 ArrayList<PImage> images = new ArrayList<PImage>();
@@ -288,7 +293,17 @@ void draw() {
     depth = int(slideTime * 7 / slideDuration);
   }
   
-  if(useText) {
+  if(displayMode == 1 || displayMode == 2) {
+    if(displayMode == 2) {
+      String hourString = "" + (hour() % 12);
+      if(hourString.equals("0")) {
+        hourString = "12";
+      }
+      
+      String minuteString = String.format("%02d", minute());
+      message = hourString+":"+minuteString+" ";
+    }
+    
     messageIndex = (m/letterDuration) % message.length();
     int char_index = (int)(message.charAt(messageIndex));
     char[] letter = font8x8_basic[ char_index ];
