@@ -117,9 +117,10 @@ void loop() {
     demoMode = 0;
 
     Serial.readBytes(rgb, 3*512);
+    
+    const byte divisor = 256 / brightness;
 
     for (int i = 0; i < 512; i++) {
-      const byte divisor = 256 / brightness;
       //read in the color channels for each pixel
       byte r = rgb[i*3+0];// / divisor;
       byte g = rgb[i*3+1];// / divisor;
