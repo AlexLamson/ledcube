@@ -31,7 +31,8 @@ CRGB leds[512];
 
 // end cube stuff
 
-byte demoMode = 1; // proj, rain, colors, wander, function
+byte demoMode = 1; // proj, rain, color sphere, wander, function
+const unsigned int demoTimes[] = {5000, 10000, 30000, 10000, 10000};
 const byte numDemos = 5;
 
 // projection
@@ -43,7 +44,7 @@ byte brightness = 64;
 const byte tickMillis = 20;
 unsigned long lastTickTime = 0;
 
-const int demoTimeout = 30000;
+//const int demoTimeout = 30000;
 const int serialTimeout = 5000;
 unsigned long lastDemoTime = 0;
 
@@ -144,7 +145,7 @@ void loop() {
   } else {
     // demo
 
-    if (demoMode == 0 || millis() >= lastDemoTime + demoTimeout) {
+    if (demoMode == 0 || millis() >= lastDemoTime + demoTimes[demoMode]) {
       lastDemoTime = millis();
       // advance demo
       demoMode++;
@@ -172,7 +173,7 @@ void loop() {
         }
         break;
         
-        case 2: // colors
+        case 2: // color sphere
         hue += 2;
 //        setColor( CHSV( hue, 255, value ) );
         for (byte i = 0; i < 8; i++) {
@@ -201,6 +202,7 @@ void loop() {
         break;
 
         case 4: // function plotter
+        FastLED.clear();
         {
           for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
