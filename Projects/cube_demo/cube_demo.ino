@@ -31,8 +31,8 @@ CRGB leds[512];
 
 // end cube stuff
 
-byte demoMode = 1; // proj, rain, colors, wander
-const byte numDemos = 4;
+byte demoMode = 1; // proj, rain, colors, wander, function
+const byte numDemos = 5;
 
 // projection
 byte rgb[3*512];
@@ -96,6 +96,10 @@ void beginWander() {
   }
 }
 
+// function plot
+float w = 0;
+float w_increment = 0.01;
+
 void setup() {
   FastLED.addLeds<WS2812B, DATA0>(leds, 0,   128);
   FastLED.addLeds<WS2812B, DATA1>(leds, 128, 128);
@@ -117,9 +121,10 @@ void loop() {
     demoMode = 0;
 
     Serial.readBytes(rgb, 3*512);
+    
+    const byte divisor = 256 / brightness;
 
     for (int i = 0; i < 512; i++) {
-      const byte divisor = 256 / brightness;
       //read in the color channels for each pixel
       byte r = rgb[i*3+0];// / divisor;
       byte g = rgb[i*3+1];// / divisor;
@@ -147,7 +152,8 @@ void loop() {
       if (demoMode == 0) demoMode = 1;
       switch (demoMode) {
         case 1: beginRain(); break;
-        case 3: beginWander();
+        case 3: beginWander(); break;
+        case 4: w = 0; break;
       }
     }
     
@@ -176,7 +182,7 @@ void loop() {
               float dy = float(j) - 3.5;
               float dz = float(k) - 3.5;
               float dist = sqrt( pow(dx, 2) + pow(dy, 2) + pow(dz, 2) );
-              float offset = dist / 4.0;
+              float offset = dist * 0.25;
               leds[ getIndex( i, j, k ) ] = CHSV( hue - byte(offset * 128), 255, value);
             }
           }
@@ -191,6 +197,24 @@ void loop() {
           wanderers[i].tick();
           
           drawSmoothedPixel(wanderers[i].x, wanderers[i].y, wanderers[i].z, wanderers[i].color);
+        }
+        break;
+
+        case 4: // function plotter
+        {
+          for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+              float dx = float(i) - 3.5;
+              float dy = float(j) - 3.5;
+              float dist = sqrt( pow(dx, 2) + pow(dy, 2) );
+              
+              float z = 3.0 * cos((dist + w) * 2.0) + 3.5;
+              drawSmoothedPixel(i, j, z, CRGB(255 - i*32, 31 + i*32, j*32));
+
+              w += w_increment;
+            }
+          }
+          break;
         }
       }
 
