@@ -4,11 +4,20 @@ Draw letters and numbers on the cube
 
 
 boolean usePort = true; //set this to false if you aren't displaying it on the physical cube
-String message = "LOVE";
+String message = "Love&Joy";
 int messageIndex = 0;
 int startTime = 0;
 int slideDuration = 500;
 int letterDuration = 1500;
+
+//color textColor = color(253,134,170);
+color textColor = color(255,15,15);
+color bgColor = color(0, 0, 64);
+boolean useRainbowText = false;
+int hueIndex = 0;
+int hueSpeed = 10;
+int maxHue = 1000;
+
 
 /*
  * 0 = show text message
@@ -241,16 +250,20 @@ void draw() {
 
   //angle at which the cube should be viewed
 
-  float mX = 0.15937495;
-  float mY = 0.0958333;
+  //float mX = 0.15937495;
+  //float mY = 0.0958333;
   
+  float mX = 0.115625024;
+  float mY = -0.40833336;
+
   //float mX = map(mouseX,0,width,-1,1);
   //float mY = map(mouseY,0,height,-1,1);
-  
   //println(mX+","+mY);
+  
   rotateZ(0.5*PI);
   rotateY(mY*PI);
-  rotateX(mX*PI);
+  rotateZ(mX*PI);
+  //rotateX(mX*PI);
 
   //find the screen bounds of the cube
   float minCubeX = width;
@@ -316,29 +329,45 @@ void draw() {
           String binary_string = String.format("%8s", Integer.toBinaryString((int)row)).replace(' ', '0');
           //println(binary_string);
 
-          int r = 0;
-          int g = 0;
-          int b = 255;
+          int r = (int)red(bgColor);
+          int g = (int)green(bgColor);
+          int b = (int)blue(bgColor);
+          
           
           boolean led_is_on = binary_string.charAt(y) == '1';
           if(z == depth && led_is_on) {
-            r = 255;
-            g = 0;
-            b = 0;
+            if(useRainbowText) {
+              colorMode(HSB, maxHue);
+              color rainbowColor = color(hueIndex, maxHue, maxHue);
+              colorMode(RGB, 255);
+              
+              r = (int)red(rainbowColor);
+              g = (int)green(rainbowColor);
+              b = (int)blue(rainbowColor);
+            }
+            else {
+              r = (int)red(textColor);
+              g = (int)green(textColor);
+              b = (int)blue(textColor);
+            }
           }
           
+          //colorMode(RGB, 255);
           leds[i].ledColor = color(r, g, b); //map each axis to a color channel
           allRGB[i*3+0] = (byte)gamma[r]; //red
           allRGB[i*3+1] = (byte)gamma[g]; //green
           allRGB[i*3+2] = (byte)gamma[b]; //blue
-  
+          
           i++;
         }
       }
     }
     
+    hueIndex += hueSpeed;
+    hueIndex = hueIndex % maxHue;
     
-  } //end of useText if statement
+    
+  } //oehterotherwise show the symbols
   else if(displayMode == 1) {
     imageIndex = (m/letterDuration) % images.size();
     
@@ -407,7 +436,10 @@ class LED {
     pushMatrix();
     translate(position.x, position.y, position.z);
     noStroke();
-    fill(ledColor);
+    
+    //fill(ledColor);
+    fill(color(red(ledColor), green(ledColor), blue(ledColor), 128));
+    
     sphere(1.27/2);
     popMatrix();
   }
