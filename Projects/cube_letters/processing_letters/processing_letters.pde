@@ -3,7 +3,7 @@ Draw letters and numbers on the cube
 */
 
 
-boolean usePort = false; //set this to false if you aren't displaying it on the physical cube
+boolean usePort = true; //set this to false if you aren't displaying it on the physical cube
 String message = "LOVE";
 int messageIndex = 0;
 int startTime = 0;
@@ -293,7 +293,7 @@ void draw() {
     depth = int(slideTime * 7 / slideDuration);
   }
   
-  if(displayMode == 1 || displayMode == 2) {
+  if(displayMode == 0 || displayMode == 2) {
     if(displayMode == 2) {
       String hourString = "" + (hour() % 12);
       if(hourString.equals("0")) {
@@ -309,17 +309,18 @@ void draw() {
     char[] letter = font8x8_basic[ char_index ];
     
     int i = 0;
-    for(int x = 0; x < 8; x++) {
-      char row = letter[x];
-      String binary_string = String.format("%8s", Integer.toBinaryString((int)row)).replace(' ', '0');
-      //println(binary_string);
+    for(int z = 0; z < 8; z++) {
       for(int y = 0; y < 8; y++) {
-        boolean led_is_on = binary_string.charAt(y) == '1';
-        for(int z = 0; z < 8; z++) {
+        for(int x = 0; x < 8; x++) {
+          char row = letter[7-x];
+          String binary_string = String.format("%8s", Integer.toBinaryString((int)row)).replace(' ', '0');
+          //println(binary_string);
+
           int r = 0;
           int g = 0;
           int b = 255;
           
+          boolean led_is_on = binary_string.charAt(y) == '1';
           if(z == depth && led_is_on) {
             r = 255;
             g = 0;
@@ -338,7 +339,7 @@ void draw() {
     
     
   } //end of useText if statement
-  else {
+  else if(displayMode == 1) {
     imageIndex = (m/letterDuration) % images.size();
     
     PImage img = images.get(imageIndex);
