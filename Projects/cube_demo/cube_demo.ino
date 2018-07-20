@@ -31,7 +31,7 @@ CRGB leds[512];
 
 // end cube stuff
 
-byte demoMode = 1; // proj, rain, color sphere, wander, function
+byte demoMode = 2; // proj, rain, color sphere, wander, function
 const unsigned int demoTimes[] = {5000, 10000, 30000, 10000, 10000};
 const byte numDemos = 5;
 
