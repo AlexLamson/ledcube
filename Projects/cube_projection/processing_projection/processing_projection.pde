@@ -118,8 +118,16 @@ void draw() {
   //float mY = 0.37222221; //map(mouseY,0,height,0,1);
   
   //right corner of data input wires
-  float mX = -0.27499998;//map(mouseX,0,width,-1,1);
-  float mY = 0.4333332;//map(mouseY,0,height,-1,1);
+  //float mX = -0.27499998;//map(mouseX,0,width,-1,1);
+  //float mY = 0.4333332;//map(mouseY,0,height,-1,1);
+
+  //class final demo: stand in front of back door
+  //float mX = 0.19375002;
+  //float mY = 0.64166665;
+
+  //class final demo: stand in front of table
+  float mX = 0.28750002;
+  float mY = 0.375;
 
   //float mX = map(mouseX,0,width,-1,1);
   //float mY = map(mouseY,0,height,-1,1);
