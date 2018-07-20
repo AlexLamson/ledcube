@@ -99,7 +99,7 @@ void beginWander() {
 
 // function plot
 float w = 0;
-float w_increment = 0.01;
+float w_increment = 0.001;
 
 void setup() {
   FastLED.addLeds<WS2812B, DATA0>(leds, 0,   128);
@@ -204,18 +204,20 @@ void loop() {
         case 4: // function plotter
         FastLED.clear();
         {
+//          unsigned long startTime = millis();
           for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
               float dx = float(i) - 3.5;
               float dy = float(j) - 3.5;
               float dist = sqrt( pow(dx, 2) + pow(dy, 2) );
               
-              float z = 3.0 * cos((dist + w) * 2.0) + 3.5;
+              float z = 2.0 * cos((dist + w) * 1.5) + 3.5;
               drawSmoothedPixel(i, j, z, CRGB(255 - i*32, 31 + i*32, j*32));
 
               w += w_increment;
             }
           }
+//          Serial.println(millis() - startTime);
           break;
         }
       }
