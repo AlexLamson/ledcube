@@ -367,23 +367,23 @@ void draw() {
     hueIndex = hueIndex % maxHue;
     
     
-  } //oehterotherwise show the symbols
+  } //otherwise show the symbols
   else if(displayMode == 1) {
     imageIndex = (m/letterDuration) % images.size();
     
     PImage img = images.get(imageIndex);
     
     int i = 0;
-    for(int x = 0; x < 8; x++) {
+    for(int z = 0; z < 8; z++) {
       for(int y = 0; y < 8; y++) {
-        for(int z = 0; z < 8; z++) {
+        for(int x = 0; x < 8; x++) {
           int r = 0;
           int g = 0;
-          int b = 255;
+          int b = 40;
           
-          boolean led_is_on = img.get(7-y, x) == color(255);
+          boolean led_is_on = img.get(7-y, 7-x) == color(255);
           if(z == depth && led_is_on) {
-            r = 255;
+            r = 200;
             g = 0;
             b = 0;
           }
