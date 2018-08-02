@@ -35,8 +35,8 @@ CRGB leds[512];
 // end cube stuff
 
 byte demoMode = 5; // proj, rain, color sphere, wander, function, trimmed sphere, bouncing in rgb space, color snake, color pyramid
-//const unsigned int demoTimes[] = {5000, 5000, 30000, 5000, 10000, 15000, 20000, 15000, 10000};
-const unsigned int demoTimes[] = {100, 100, 100, 100, 100, 100, 100, 600000, 100};
+const unsigned int demoTimes[] = {5000, 5000, 30000, 5000, 10000, 20000, 20000, 15000, 10000};
+//const unsigned int demoTimes[] = {100, 100, 100, 100, 100, 600000, 100, 100, 100};
 const byte numDemos = 9;
 
 // projection
@@ -80,6 +80,7 @@ void beginRain() {
 
 // colors
 byte hue = 0;
+byte hue2 = 0;
 const byte value = 128; // brightness of hue
 
 
@@ -242,7 +243,8 @@ void loop() {
         }
 
         case 5: // sphere with the leds off outside the sphere
-        hue += 2;
+        hue += 1;
+        hue2 += 3;
 //        setColor( CHSV( hue, 255, value ) );
         for (byte i = 0; i < 8; i++) {
           for (byte j = 0; j < 8; j++) {
@@ -251,12 +253,13 @@ void loop() {
               float dy = float(j) - 3.5;
               float dz = float(k) - 3.5;
               float dist = sqrt( pow(dx, 2) + pow(dy, 2) + pow(dz, 2) );
-              float offset = dist / 6.06;
+              float offset = dist * 0.1649572197684645;
               if(dist > 4) {
                 leds[ getIndex( i, j, k ) ] = CRGB( 0, 0, 0 );
               } else {
 //                leds[ getIndex( i, j, k ) ] = CHSV( hue - byte(offset * 255), 255, byte(offset * 255) - hue );
-                leds[ getIndex( i, j, k ) ] = CHSV( hue - byte(offset * 255), 255, hue - byte(offset * 255) );
+                leds[ getIndex( i, j, k ) ] = CHSV( hue - byte(offset * 255), 255, cubicwave8(hue2 - byte(offset * 255)) );
+//                leds[ getIndex( i, j, k ) ] = CHSV( hue - byte(offset * 255), 255, hue - byte(offset * 255) );
 //                leds[ getIndex( i, j, k ) ] = CHSV( hue - byte(offset * 255), 255, hue - byte((1.0-((offset-0.5)*2)) * 255) );
               }
               
