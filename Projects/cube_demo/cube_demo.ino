@@ -34,10 +34,9 @@ CRGB leds[512];
 
 // end cube stuff
 
-byte demoMode = 8; // proj, rain, color sphere, wander, function, trimmed sphere, bouncing in rgb space, color snake, color pyramid
-//const unsigned int demoTimes[] = {5000, 10000, 30000, 10000, 10000};
-const unsigned int demoTimes[] = {5000, 5000, 30000, 5000, 10000, 10000, 30000, 15000, 10000};
-//const unsigned int demoTimes[] = {100, 100, 100, 100, 100, 100, 100, 100, 120000};
+byte demoMode = 5; // proj, rain, color sphere, wander, function, trimmed sphere, bouncing in rgb space, color snake, color pyramid
+//const unsigned int demoTimes[] = {5000, 5000, 30000, 5000, 10000, 15000, 20000, 15000, 10000};
+const unsigned int demoTimes[] = {100, 100, 100, 100, 100, 100, 100, 600000, 100};
 const byte numDemos = 9;
 
 // projection
@@ -252,12 +251,15 @@ void loop() {
               float dy = float(j) - 3.5;
               float dz = float(k) - 3.5;
               float dist = sqrt( pow(dx, 2) + pow(dy, 2) + pow(dz, 2) );
-              float offset = dist * 0.25;
-              byte temp_value = value;
+              float offset = dist / 6.06;
               if(dist > 4) {
-                temp_value = 0;
+                leds[ getIndex( i, j, k ) ] = CRGB( 0, 0, 0 );
+              } else {
+//                leds[ getIndex( i, j, k ) ] = CHSV( hue - byte(offset * 255), 255, byte(offset * 255) - hue );
+                leds[ getIndex( i, j, k ) ] = CHSV( hue - byte(offset * 255), 255, hue - byte(offset * 255) );
+//                leds[ getIndex( i, j, k ) ] = CHSV( hue - byte(offset * 255), 255, hue - byte((1.0-((offset-0.5)*2)) * 255) );
               }
-              leds[ getIndex( i, j, k ) ] = CHSV( hue - byte(offset * 128), 255, temp_value);
+              
             }
           }
         }
