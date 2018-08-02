@@ -296,7 +296,7 @@ void loop() {
           FastLED.clear();
         }
         for (int i = 0; i < snake_frame; i++) {
-          leds[i] = CHSV( int(1.0*i/snake_frame*255), 255, value);
+          leds[i] = CHSV( int(1.0*i/512*255), 255, value);
         }
         snake_frame = (snake_frame+1) % 512;
         break;
