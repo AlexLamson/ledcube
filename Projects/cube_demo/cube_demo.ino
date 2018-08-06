@@ -36,6 +36,7 @@ CRGB leds[512];
 
 byte demoMode = 5; // proj, rain, color sphere, wander, function, trimmed sphere, bouncing in rgb space, color snake, color pyramid
 const unsigned int demoTimes[] = {5000, 5000, 30000, 5000, 10000, 20000, 20000, 15000, 10000};
+bool advanceDemo = true; // toggle to stay on one demo forever
 //const unsigned int demoTimes[] = {100, 100, 100, 100, 100, 600000, 100, 100, 100};
 const byte numDemos = 9;
 
@@ -164,7 +165,7 @@ void loop() {
   } else {
     // demo
 
-    if (demoMode == 0 || millis() >= lastDemoTime + demoTimes[demoMode]) {
+    if (demoMode == 0 || (millis() >= lastDemoTime + demoTimes[demoMode] && advanceDemo)) {
       lastDemoTime = millis();
       // advance demo
       demoMode++;
@@ -389,7 +390,7 @@ void setColor(CRGB color) {
 }
 
 void clear() {
-  setColor(0);
+  FastLED.clear();
 }
 
 // rain
