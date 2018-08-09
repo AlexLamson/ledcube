@@ -78,6 +78,21 @@ void beginRain() {
 
 //math
 #define PI 3.14159265359
+#define PI2 6.28308530718
+float sqr(float x) {
+  return x*x;
+}
+const float inv255 = 1.0/255;
+const float invPi = 1.0/PI;
+float cosf(float theta) {
+  while (theta >= PI2) theta -= PI2;
+  while (theta < 0) theta += PI2;
+  byte b = int(theta * 128.0 * invPi) % 256;
+
+  byte out = cos8(b);
+
+  return float(out) * 2.0 * inv255 - 1;
+}
 
 // colors
 byte hue = 0;
@@ -204,7 +219,7 @@ void loop() {
               float dx = float(i) - 3.5;
               float dy = float(j) - 3.5;
               float dz = float(k) - 3.5;
-              float dist = sqrt( pow(dx, 2) + pow(dy, 2) + pow(dz, 2) );
+              float dist = sqrt( sqr(dx) + sqr(dy) + sqr(dz) );
               float offset = dist * 0.25;
               leds[ getIndex( i, j, k ) ] = CHSV( hue - byte(offset * 128), 255, value);
             }
@@ -231,9 +246,9 @@ void loop() {
             for (int j = 0; j < 8; j++) {
               float dx = float(i) - 3.5;
               float dy = float(j) - 3.5;
-              float dist = sqrt( pow(dx, 2) + pow(dy, 2) );
+              float dist = sqrt( sqr(dx) + sqr(dy) );
               
-              float z = 2.0 * cos((dist + w) * 1.5) + 3.5;
+              float z = 2.0 * cosf((dist + w) * 1.5) + 3.5;
               drawSmoothedPixel(i, j, z, CRGB(255 - i*32, 31 + i*32, j*32));
 
               w += w_increment;
@@ -253,7 +268,7 @@ void loop() {
               float dx = float(i) - 3.5;
               float dy = float(j) - 3.5;
               float dz = float(k) - 3.5;
-              float dist = sqrt( pow(dx, 2) + pow(dy, 2) + pow(dz, 2) );
+              float dist = sqrt( sqr(dx) + sqr(dy) + sqr(dz) );
               float offset = dist * 0.1649572197684645;
               if(dist > 4) {
                 leds[ getIndex( i, j, k ) ] = CRGB( 0, 0, 0 );
@@ -336,13 +351,16 @@ void loop() {
 
 void drawSmoothedPixel(float x, float y, float z, CRGB color) {
 
-  for (int i = int(x - 1); i <= int(x + 1); i++) {
-    for (int j = int(y - 1); j <= int(y + 1); j++) {
-      for (int k = int(z - 1); k <= int(z + 1); k++) {
+//  for (int i = int(x - 1); i <= int(x + 1); i++) {
+//    for (int j = int(y - 1); j <= int(y + 1); j++) {
+//      for (int k = int(z - 1); k <= int(z + 1); k++) {
+  for (int i = int(x); i <= int(x + 1); i++) {
+    for (int j = int(y); j <= int(y + 1); j++) {
+      for (int k = int(z); k <= int(z + 1); k++) {
         
         if (!(i < 0 || j < 0 || k < 0 || i >= 8 || j >= 8 || k >= 8)) {
           float compX = x - i, compY  = y - j, compZ = z - k;
-          float dist = sqrt( pow(compX, 2) + pow(compY, 2) + pow(compZ, 2) );
+          float dist = sqrt( sqr(compX) + sqr(compY) + sqr(compZ) );
           
           float normBrightness = max(0.0, 1.0-dist);
           byte brightness = mapBrightness(normBrightness);
@@ -358,7 +376,7 @@ void drawSmoothedPixel(float x, float y, float z, CRGB color) {
 }
 
 byte mapBrightness(float input) {
-  return 255*(0.5-cos( PI * pow(input, 1.5) )/2); // power of 1.5 seems to preserve brightness pretty well.
+  return 255*(0.5-cosf( PI * pow(input, 1.5) )*0.5); // power of 1.5 seems to preserve brightness pretty well.
 }
 
 CRGB scaleColor(CRGB color, byte brightness) {
@@ -374,11 +392,11 @@ int getIndex(int x, int y, int z) {
 }
 
 byte getX(int i) {
-  return byte(i /64);
+  return byte(i>>6);
 }
 
 byte getY(int i) {
-  return byte((i/8) % 8);
+  return byte((i>>3) % 8);
 }
 
 byte getZ(int i) {
