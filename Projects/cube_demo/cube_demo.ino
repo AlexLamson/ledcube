@@ -49,8 +49,6 @@ byte brightness = 64;
 const byte tickMillis = 20;
 unsigned long lastTickTime = 0;
 
-//const int demoTimeout = 30000;
-const int serialTimeout = 5000;
 unsigned long lastDemoTime = 0;
 
 // rain
@@ -84,12 +82,13 @@ float sqr(float x) {
 }
 const float inv255 = 1.0/255;
 const float invPi = 1.0/PI;
+const float invTau_256 = 128.0/PI;
 float cosf(float theta) {
   while (theta >= PI2) theta -= PI2;
   while (theta < 0) theta += PI2;
-  byte b = int(theta * 128.0 * invPi) % 256;
+  byte b = int(theta * invTau_256) % 256;
 
-  byte out = cos8(b);
+  byte out = cubicwave8(128+b); // cubicwave is a signwave
 
   return float(out) * 2.0 * inv255 - 1;
 }
@@ -142,42 +141,15 @@ void setup() {
   FastLED.addLeds<WS2812B, DATA2>(leds, 256, 128);
   FastLED.addLeds<WS2812B, DATA3>(leds, 384, 128);
 
-//  Serial.begin(115200);
-  Serial.begin(921600);
+  Serial.begin(115200);
 
-//  FastLED.setBrightness(64);
   clear();
   FastLED.show();
 }
 
 void loop() {
   
-  if ( Serial.available() ) {
-    lastTickTime = millis();
-    demoMode = 0;
-
-    Serial.readBytes(rgb, 3*512);
-    
-    const byte divisor = 256 / brightness;
-
-    for (int i = 0; i < 512; i++) {
-      //read in the color channels for each pixel
-      byte r = rgb[i*3+0];// / divisor;
-      byte g = rgb[i*3+1];// / divisor;
-      byte b = rgb[i*3+2];// / divisor;
-
-      //compute the xyz position from the index
-      byte x = byte(i /64);
-      byte y = byte((i/8) % 8);
-      byte z = byte(i % 8);
-    
-      leds[ getIndex( x, y, z ) ] = CRGB( r, g, b );
-    }
-    
-    FastLED.show();
-  } else if (demoMode == 0 && millis() < lastTickTime + serialTimeout) {
-    // wait for serial to return
-  } else {
+  if (true) {
     // demo
 
     if (demoMode == 0 || (millis() >= lastDemoTime + demoTimes[demoMode] && advanceDemo)) {
@@ -258,7 +230,7 @@ void loop() {
           break;
         }
 
-        case 5: // sphere with the leds off outside the sphere
+        case 5: // trimmed sphere
         hue += 1;
         hue2 += 3;
 //        setColor( CHSV( hue, 255, value ) );
@@ -269,7 +241,7 @@ void loop() {
               float dy = float(j) - 3.5;
               float dz = float(k) - 3.5;
               float dist = sqrt( sqr(dx) + sqr(dy) + sqr(dz) );
-              float offset = dist * 0.1649572197684645;
+              float offset = dist * 0.1649572197684645; // divide by distance from center to corner
               if(dist > 4) {
                 leds[ getIndex( i, j, k ) ] = CRGB( 0, 0, 0 );
               } else {
