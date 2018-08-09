@@ -148,174 +148,172 @@ void setup() {
 }
 
 void loop() {
-  
-  if (true) {
-    // demo
+  // demo
 
-    if (demoMode == 0 || (millis() >= lastDemoTime + demoTimes[demoMode] && advanceDemo)) {
-      lastDemoTime = millis();
-      // advance demo
-      demoMode++;
-      demoMode = demoMode % numDemos;
-      if (demoMode == 0) demoMode = 1;
-      switch (demoMode) {
-        case 1: beginRain(); break;
-        case 3: beginWander(); break;
-        case 4: w = 0; break;
-        case 6: FastLED.clear(); break;
-        case 7: snake_frame = 0; break;
-      }
+  if (demoMode == 0 || (millis() >= lastDemoTime + demoTimes[demoMode] && advanceDemo)) {
+    lastDemoTime = millis();
+    // advance demo
+    demoMode++;
+    demoMode = demoMode % numDemos;
+    if (demoMode == 0) demoMode = 1;
+    switch (demoMode) {
+      case 1: beginRain(); break;
+      case 3: beginWander(); break;
+      case 4: w = 0; break;
+      case 6: FastLED.clear(); break;
+      case 7: snake_frame = 0; break;
     }
-    
-    if (millis() >= lastTickTime + tickMillis) {
-      lastTickTime = millis();
+  }
+  
+  if (millis() >= lastTickTime + tickMillis) {
+    lastTickTime = millis();
 
-      switch (demoMode) {
-        case 1: // rain
-        clear();
-    
-        for (int i = 0; i < numDrops; i++) {
-          
-          drops[i].tick();
-          
-          drops[i].draw();
-        }
-        break;
+    switch (demoMode) {
+      case 1: // rain
+      clear();
+  
+      for (int i = 0; i < numDrops; i++) {
         
-        case 2: // color sphere
-        hue += 2;
+        drops[i].tick();
+        
+        drops[i].draw();
+      }
+      break;
+      
+      case 2: // color sphere
+      hue += 2;
 //        setColor( CHSV( hue, 255, value ) );
-        for (byte i = 0; i < 8; i++) {
-          for (byte j = 0; j < 8; j++) {
-            for (byte k = 0; k < 8; k++) {
-              float dx = float(i) - 3.5;
-              float dy = float(j) - 3.5;
-              float dz = float(k) - 3.5;
-              float dist = sqrt( sqr(dx) + sqr(dy) + sqr(dz) );
-              float offset = dist * 0.25;
-              leds[ getIndex( i, j, k ) ] = CHSV( hue - byte(offset * 128), 255, value);
-            }
+      for (byte i = 0; i < 8; i++) {
+        for (byte j = 0; j < 8; j++) {
+          for (byte k = 0; k < 8; k++) {
+            float dx = float(i) - 3.5;
+            float dy = float(j) - 3.5;
+            float dz = float(k) - 3.5;
+            float dist = sqrt( sqr(dx) + sqr(dy) + sqr(dz) );
+            float offset = dist * 0.25;
+            leds[ getIndex( i, j, k ) ] = CHSV( hue - byte(offset * 128), 255, value);
           }
         }
-        break;
+      }
+      break;
+      
+      case 3: // wander
+      clear(); // looks pretty cool without this to be honest
         
-        case 3: // wander
-        clear(); // looks pretty cool without this to be honest
+      for (int i = 0; i < numWanderers; i++) {
           
-        for (int i = 0; i < numWanderers; i++) {
+        wanderers[i].tick();
+        
+        drawSmoothedPixel(wanderers[i].x, wanderers[i].y, wanderers[i].z, wanderers[i].color);
+      }
+      break;
+
+      case 4: // function plotter
+      FastLED.clear();
+      {
+//        unsigned long startTime = millis();
+        for (int i = 0; i < 8; i++) {
+          for (int j = 0; j < 8; j++) {
+            float dx = float(i) - 3.5;
+            float dy = float(j) - 3.5;
+            float dist = sqrt( sqr(dx) + sqr(dy) );
             
-          wanderers[i].tick();
-          
-          drawSmoothedPixel(wanderers[i].x, wanderers[i].y, wanderers[i].z, wanderers[i].color);
-        }
-        break;
+            float z = 2.0 * cosf((dist + w) * 1.5) + 3.5;
+            drawSmoothedPixel(i, j, z, CRGB(255 - i*32, 31 + i*32, j*32));
 
-        case 4: // function plotter
-        FastLED.clear();
-        {
-//          unsigned long startTime = millis();
-          for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-              float dx = float(i) - 3.5;
-              float dy = float(j) - 3.5;
-              float dist = sqrt( sqr(dx) + sqr(dy) );
-              
-              float z = 2.0 * cosf((dist + w) * 1.5) + 3.5;
-              drawSmoothedPixel(i, j, z, CRGB(255 - i*32, 31 + i*32, j*32));
-
-              w += w_increment;
-            }
+            w += w_increment;
           }
-//          Serial.println(millis() - startTime);
-          break;
         }
+//        Serial.println(millis() - startTime);
+        break;
+      }
 
-        case 5: // trimmed sphere
-        hue += 1;
-        hue2 += 3;
+      case 5: // trimmed sphere
+      hue += 1;
+      hue2 += 3;
 //        setColor( CHSV( hue, 255, value ) );
-        for (byte i = 0; i < 8; i++) {
-          for (byte j = 0; j < 8; j++) {
-            for (byte k = 0; k < 8; k++) {
-              float dx = float(i) - 3.5;
-              float dy = float(j) - 3.5;
-              float dz = float(k) - 3.5;
-              float dist = sqrt( sqr(dx) + sqr(dy) + sqr(dz) );
-              float offset = dist * 0.1649572197684645; // divide by distance from center to corner
-              if(dist > 4) {
-                leds[ getIndex( i, j, k ) ] = CRGB( 0, 0, 0 );
-              } else {
+      for (byte i = 0; i < 8; i++) {
+        for (byte j = 0; j < 8; j++) {
+          for (byte k = 0; k < 8; k++) {
+            float dx = float(i) - 3.5;
+            float dy = float(j) - 3.5;
+            float dz = float(k) - 3.5;
+            float dist = sqrt( sqr(dx) + sqr(dy) + sqr(dz) );
+            float offset = dist * 0.1649572197684645; // divide by distance from center to corner
+            if(dist > 4) {
+              leds[ getIndex( i, j, k ) ] = CRGB( 0, 0, 0 );
+            } else {
 //                leds[ getIndex( i, j, k ) ] = CHSV( hue - byte(offset * 255), 255, byte(offset * 255) - hue );
-                leds[ getIndex( i, j, k ) ] = CHSV( hue - byte(offset * 255), 255, cubicwave8(hue2 - byte(offset * 255)) );
+              leds[ getIndex( i, j, k ) ] = CHSV( hue - byte(offset * 255), 255, cubicwave8(hue2 - byte(offset * 255)) );
 //                leds[ getIndex( i, j, k ) ] = CHSV( hue - byte(offset * 255), 255, hue - byte(offset * 255) );
 //                leds[ getIndex( i, j, k ) ] = CHSV( hue - byte(offset * 255), 255, hue - byte((1.0-((offset-0.5)*2)) * 255) );
-              }
-              
             }
+            
           }
         }
-        break;
+      }
+      break;
 
-        case 6: // another dumb color thing
+      case 6: // another dumb color thing
+      FastLED.clear();
+
+      bounceX += bounceDX;
+      if(bounceX <= 0 || bounceX >= value-8*cubeScale) {
+        bounceDX *= -1;
+      }
+      bounceY += bounceDY;
+      if(bounceY <= 0 || bounceY >= value-8*cubeScale) {
+        bounceDY *= -1;
+      }
+      bounceZ += bounceDZ;
+      if(bounceZ <= 0 || bounceZ >= value-8*cubeScale) {
+        bounceDZ *= -1;
+      }
+
+      for (byte i = 0; i < 8; i++) {
+        for (byte j = 0; j < 8; j++) {
+          for (byte k = 0; k < 8; k++) {
+            leds[ getIndex( i, j, k ) ] = CRGB( i*cubeScale+(int)bounceX, j*cubeScale+(int)bounceY, k*cubeScale+(int)bounceZ);
+          }
+        }
+      }
+      
+      break;
+
+      case 7: // color snake
+      if(snake_frame == 0) {
         FastLED.clear();
+      }
+      for (int i = 0; i < snake_frame; i++) {
+        leds[i] = CHSV( int(1.0*i/512*255), 255, value);
+      }
+      snake_frame = (snake_frame+1) % 512;
+      break;
 
-        bounceX += bounceDX;
-        if(bounceX <= 0 || bounceX >= value-8*cubeScale) {
-          bounceDX *= -1;
-        }
-        bounceY += bounceDY;
-        if(bounceY <= 0 || bounceY >= value-8*cubeScale) {
-          bounceDY *= -1;
-        }
-        bounceZ += bounceDZ;
-        if(bounceZ <= 0 || bounceZ >= value-8*cubeScale) {
-          bounceDZ *= -1;
-        }
-
-        for (byte i = 0; i < 8; i++) {
-          for (byte j = 0; j < 8; j++) {
-            for (byte k = 0; k < 8; k++) {
-              leds[ getIndex( i, j, k ) ] = CRGB( i*cubeScale+(int)bounceX, j*cubeScale+(int)bounceY, k*cubeScale+(int)bounceZ);
-            }
-          }
-        }
-        
-        break;
-
-        case 7: // color snake
-        if(snake_frame == 0) {
-          FastLED.clear();
-        }
-        for (int i = 0; i < snake_frame; i++) {
-          leds[i] = CHSV( int(1.0*i/512*255), 255, value);
-        }
-        snake_frame = (snake_frame+1) % 512;
-        break;
-
-        case 8: // color pyramid
-        hue += 4;
-        for (byte i = 0; i < 8; i++) {
-          for (byte j = 0; j < 8; j++) {
-            for (byte k = 0; k < 8; k++) {
-              float dx = float(i) - 3.5;
-              float dy = float(j) - 3.5;
-              float dist = sqrt(dx*dx + dy*dy);
-              if(dist >= 4-(k/2)) {
-                leds[ getIndex( i, j, k ) ] = CRGB( 0, 0, 0);
-              } else {
-                double angle = atan2(dy,dx)/PI;
+      case 8: // color pyramid
+      hue += 4;
+      for (byte i = 0; i < 8; i++) {
+        for (byte j = 0; j < 8; j++) {
+          for (byte k = 0; k < 8; k++) {
+            float dx = float(i) - 3.5;
+            float dy = float(j) - 3.5;
+            float dist = sqrt(dx*dx + dy*dy);
+            if(dist >= 4-(k/2)) {
+              leds[ getIndex( i, j, k ) ] = CRGB( 0, 0, 0);
+            } else {
+              double angle = atan2(dy,dx)/PI;
 //                int temp_value = int(1.0*(7-k)/8*value);
-                leds[ getIndex( i, j, k ) ] = CHSV( hue - byte(angle * 128), 255, value);
-              }
+              leds[ getIndex( i, j, k ) ] = CHSV( hue - byte(angle * 128), 255, value);
             }
           }
         }
-        break;
+      }
+      break;
 
-      } //end of switch(demo)
 
-      FastLED.show();
-    }
+    } //end of switch(demo)
+
+    FastLED.show();
   }
 }
 
