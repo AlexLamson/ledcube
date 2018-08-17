@@ -133,7 +133,7 @@ void beginWander() {
 
 // function plot
 float w = 0;
-float w_increment = 0.001;
+float w_increment = -0.001;
 
 void setup() {
   FastLED.addLeds<WS2812B, DATA0>(leds, 0,   128);
