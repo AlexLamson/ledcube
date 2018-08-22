@@ -299,10 +299,13 @@ void loop() {
       if(snake_frame == 0) {
         FastLED.clear();
       }
-      for (int i = 0; i < snake_frame; i++) {
-        leds[i] = CHSV( int(1.0*i/512*255), 255, value);
-      }
-      snake_frame = (snake_frame+1) % 512;
+
+      if (snake_frame < 512)
+        leds[snake_frame] = CHSV( int(1.0*snake_frame/512*255), 255, value);
+      else
+      leds[snake_frame%512] = 0x0; // clear
+
+      snake_frame = (snake_frame+1) % 1024;
       break;
 
       case 8: // color pyramid
