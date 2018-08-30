@@ -24,6 +24,7 @@ void clear();
 void setColor(CRGB);
 
 void drawSmoothedPixel(float, float, float, CRGB);
+void drawSphereSolid(float, float, float, float, CRGB);
 byte mapBrightness(float);
 CRGB scaleColor(CRGB, byte);
 byte getX(int);
@@ -34,15 +35,15 @@ CRGB leds[512];
 
 // end cube stuff
 
-byte demoMode = 5; // proj, rain, color sphere, wander, function, trimmed sphere, bouncing in rgb space, color snake, color pyramid
-const unsigned int demoTimes[] = {5000, 5000, 30000, 5000, 10000, 20000, 20000, 15000, 10000};
+byte demoMode = 9; // proj, rain, color sphere, wander, function, trimmed sphere, bouncing in rgb space, color snake, color pyramid, floating points, spheres spinning
+const unsigned int demoTimes[] = {0, 20000, 30000, 20000, 30000, 20000, 10000, 21000, 10000, 15000, 20000};
 bool advanceDemo = true; // toggle to stay on one demo forever
 //const unsigned int demoTimes[] = {100, 100, 100, 100, 100, 600000, 100, 100, 100};
-const byte numDemos = 9;
+const byte numDemos = 11;
 
 // projection
-byte rgb[3*512];
-byte brightness = 64;
+//byte rgb[3*512];
+//byte brightness = 64;
 
 // demos
 
@@ -92,6 +93,18 @@ float cosf(float theta) {
 
   return float(out) * 2.0 * inv255 - 1;
 }
+float sinf(float theta) {
+  while (theta >= PI2) theta -= PI2;
+  while (theta < 0) theta += PI2;
+  byte b = int(theta * invTau_256) % 256;
+
+  byte out = cubicwave8(64+b); // cubicwave is a sinewave
+
+  return float(out) * 2.0 * inv255 - 1;
+}
+float randomf() {
+  return float( random(256) ) * inv255;
+}
 
 // colors
 byte hue = 0;
@@ -123,7 +136,7 @@ class Wanderer {
 const int numWanderers = 8;
 Wanderer wanderers[numWanderers];
 
-const float momentum = 0.95;
+const float momentum = 0.93;
 
 void beginWander() {
   for (byte i = 0; i < numWanderers; i++) {
@@ -134,6 +147,34 @@ void beginWander() {
 // function plot
 float w = 0;
 float w_increment = -0.001;
+
+// spinning spheres
+float sphereAngle = 0.0;
+float sphereAngleIncremement = 0.05;
+
+// floating points ...
+typedef struct {
+  float x, y, z;
+} point;
+
+const int numPoints = 32;
+point points[numPoints];
+CRGB floatColors[numPoints];
+point floatMotion = {0, 0, 0};
+point floatDMotion= {0, 0, 0};
+float floatRotZ = 0.0;
+float floatDRotZ = 0.0;
+void beginFloatingPoints() {
+  floatMotion = {0, 0, 0};
+  floatDMotion = {0, 0, 0};
+  floatRotZ = 0;
+  floatDRotZ = 0;
+
+  for (int i = 0; i < numPoints; i++) {
+    points[i] = {randomf() * 10.0f - 1.0f, randomf() * 10.0f - 1.0f, randomf() * 10.0f - 1.0f};
+    floatColors[i] = CHSV(random(256), 255, 255);
+  }
+}
 
 void setup() {
   FastLED.addLeds<WS2812B, DATA0>(leds, 0,   128);
@@ -162,6 +203,7 @@ void loop() {
       case 4: w = 0; break;
       case 6: FastLED.clear(); break;
       case 7: snake_frame = 0; break;
+      case 9: beginFloatingPoints(); break;
     }
   }
   
@@ -211,7 +253,7 @@ void loop() {
       case 4: // function plotter
       FastLED.clear();
       {
-//        unsigned long startTime = millis();
+//        unsigned long startTime = micros();
         for (int i = 0; i < 8; i++) {
           for (int j = 0; j < 8; j++) {
             float dx = float(i) - 3.5;
@@ -219,6 +261,7 @@ void loop() {
             float dist = sqrt( sqr(dx) + sqr(dy) );
 
             float z = 2.0 * cosf((dist + w) * 1.5) + 4.5; // 3.5 + 1
+//            drawSmoothedPixel(i, j, z, CRGB(255 - i*32, 31 + i*32, j*32));
             float r = 1.5 * cosf(PI + (dist + w) * 3.0) + 2.0;
             r = pow(r, 0.15);
             float rInv = 1.0 / r;
@@ -231,15 +274,15 @@ void loop() {
           distToCentroid *= (distToCentroid < 0 ? -1 : 1);
                 byte val = (max(0.0, double(r - distToCentroid)) * rInv) * 255;
           leds[ getIndex(i, j, k) ] = CRGB(scale8(col.r, val), scale8(col.g, val), scale8(col.b, val));
-
-          // TODO weird stuff happening at the bottom near 0 (something wrong with value function?
 //              }
             }
 
             w += w_increment;
+            if (w < -PI2 * 0.6666666)
+              w += PI2 * 0.6666666;
           }
         }
-//        Serial.println(millis() - startTime);
+//        Serial.println(micros() - startTime);
         break;
       }
 
@@ -328,8 +371,100 @@ void loop() {
       }
       break;
 
+      case 9: // spinning spheres
+      clear ();
+      {
+        sphereAngle += sphereAngleIncremement;
+        const float sphereRadius = 1.0; //, sphereDialation = 0.7;
+        const float interRadius = 2.0, cosSA = cosf(sphereAngle), sinSA = sinf(sphereAngle);
+        const float cosUA = cosf(sphereAngle*0.4), sinUA = sinf(sphereAngle*0.4);
+        drawSphereSolid(3.5 + interRadius*cosSA * cosUA,
+                  3.5       + interRadius*cosSA * sinUA,
+                  3.5 + interRadius*sinSA, //       * sinSA,
+                  sphereRadius, CRGB(0, 0, 255));
+
+//        const float cosSA1 = cosf(sphereAngle*sphereDialation), sinSA1 = sinf(sphereAngle*sphereDialation);
+        const float cosSA1 = cosf(sphereAngle + PI2 * 0.33333333), sinSA1 = sinf(sphereAngle + PI2 * 0.33333333);
+        drawSphereSolid(3.5 + interRadius*cosSA1  * cosUA,
+                  3.5       + interRadius*cosSA1  * sinUA,
+                  3.5 + interRadius*sinSA1, //        * sinSA,
+                  sphereRadius, CRGB(0, 255, 0));
+
+//        const float cosSA2 = cosf(sphereAngle*sqr(sphereDialation)), sinSA2 = sinf(sphereAngle*sqr(sphereDialation));
+        const float cosSA2 = cosf(sphereAngle + PI2 * 0.66666666), sinSA2 = sinf(sphereAngle + PI2 * 0.66666666);
+        drawSphereSolid(3.5 + interRadius*cosSA2  * cosUA,
+                  3.5       + interRadius*cosSA2  * sinUA,
+                  3.5 + interRadius*sinSA2, //        * sinSA,
+                  sphereRadius, CRGB(255, 0, 0));
+      }
+      break;
+
+      case 10: // floating points
+      clear();
+      const float dMotionMax = 0.005;
+      floatDMotion.x += (randomf() - 0.5) * 0.001;
+      floatDMotion.y += (randomf() - 0.5) * 0.001;
+      floatDMotion.z += (randomf() - 0.5) * 0.001;
+      if (abs(floatDMotion.x) > dMotionMax)
+        floatDMotion.x *= 0.9;
+      if (abs(floatDMotion.y) > dMotionMax)
+        floatDMotion.y *= 0.9;
+      if (abs(floatDMotion.z) > dMotionMax)
+        floatDMotion.z *= 0.9;
+
+      floatMotion.x += floatDMotion.x;
+      floatMotion.y += floatDMotion.y;
+      floatMotion.z += floatDMotion.z;
+
+      const float motionCurb = 0.9; // smoothly approach a top speed
+      floatMotion.x *= motionCurb;
+      floatMotion.y *= motionCurb;
+      floatMotion.z *= motionCurb;
+
+      // TODO rotation figuring
+
+      // apply the motion to points and draw
+      for (int i = 0; i < numPoints; i++) {
+        points[i].x += floatMotion.x;
+        points[i].y += floatMotion.y;
+        points[i].z += floatMotion.z;
+
+        // if the point is out of bounds replace it on the edge (don't care if it gets replaced next tick)
+        // TODO make uniform with respect to the direction you're moving
+        if (points[i].x < -1 || points[i].x > 9 ||
+            points[i].y < -1 || points[i].y > 9 ||
+            points[i].z < -1 || points[i].z > 9) {
+
+          float side = 10 * random(2) - 1; // pick one edge or the other
+          float randu= randomf() * 10 - 1;
+          float randv= randomf() * 10 - 1;
+
+          switch (random(3)) {
+          case 0: // x
+            points[i].x = side; points[i].y = randu; points[i].z = randv;
+            break;
+          case 1: // y
+            points[i].y = side; points[i].x = randu; points[i].z = randv;
+            break;
+          case 2: // z
+            points[i].z = side; points[i].x = randu; points[i].y = randv;
+            break;
+          }
+
+          floatColors[i] = CHSV(random(256), 255, 255);
+        } else {
+          drawSmoothedPixel(points[i].x, points[i].y, points[i].z, floatColors[i]);
+        }
+      }
+
+      break;
+
 
     } //end of switch(demo)
+
+    unsigned long computeTime = micros() - computeStartTime;
+
+    Serial.println(computeTime);
 
     FastLED.show();
   }
@@ -345,19 +480,49 @@ void drawSmoothedPixel(float x, float y, float z, CRGB color) {
   for (int i = int(x); i <= int(x + 1); i++) {
     for (int j = int(y); j <= int(y + 1); j++) {
       for (int k = int(z); k <= int(z + 1); k++) {
-        
+
         if (!(i < 0 || j < 0 || k < 0 || i >= 8 || j >= 8 || k >= 8)) {
           float compX = x - i, compY  = y - j, compZ = z - k;
           float dist = sqrt( sqr(compX) + sqr(compY) + sqr(compZ) );
-          
+
           float normBrightness = max(0.0, 1.0-dist);
           byte brightness = mapBrightness(normBrightness);
 
           byte cx = i, cy = j, cz = k;
-  
+
           leds[ getIndex(cx, cy, cz) ] += CRGB( scale8(color.r, brightness), scale8(color.g, brightness), scale8(color.b, brightness) );
         }
-        
+
+      }
+    }
+  }
+}
+
+void drawSphereSolid(float x, float y, float z, float r, CRGB color) {
+  for (int i = int(x-r); i <= int(x+r + 1); i++) {
+    for (int j = int(y-r); j <= int(y+r + 1); j++) {
+      for (int k = int(z-r); k <= int(z+r + 1); k++) {
+
+        if (i < 0 || j < 0 || k < 0 || i >= 8 || j >= 8 || k >= 8)
+          continue;
+
+        float compX = x - i, compY  = y - j, compZ = z - k;
+        float distSqr = sqr(compX) + sqr(compY) + sqr(compZ);
+
+        // avoid computations on space outside the sphere
+        if (distSqr > sqr(r + 1))
+          continue;
+
+        byte brightness = 255;
+        if (distSqr > sqr(r)) {
+          // this pixel is outside the sphere but within a unit of it
+          brightness = byte( 256.0 - 255.0 * (sqrt(distSqr) - r) );
+        }
+
+        byte cx = i, cy = j, cz = k;
+
+        leds[ getIndex(cx, cy, cz) ] += CRGB( scale8(color.r, brightness), scale8(color.g, brightness), scale8(color.b, brightness) );
+
       }
     }
   }
@@ -373,9 +538,9 @@ CRGB scaleColor(CRGB color, byte brightness) {
 
 int getIndex(int x, int y, int z) {
   // consider the last installed slice to be the front (y = 0), with left having x=0, and bottom z=0
-  
+
   return ( (z + y%2)%2 == 0 ? x : 7 - x ) +
-    ( y%2 == 0 ? z*8 : (7 - z) * 8 ) + 
+    ( y%2 == 0 ? z*8 : (7 - z) * 8 ) +
     y * 64;
 }
 
@@ -447,9 +612,9 @@ void Wanderer::init() {
 }
 void Wanderer::tick() {
   // ought to be done as a random vector but that's effort for a later date
-  dx += (float(random(512)) / 512.0 - 0.5) * 0.075;
-  dy += (float(random(512)) / 512.0 - 0.5) * 0.075;
-  dz += (float(random(512)) / 512.0 - 0.5) * 0.075;
+  dx += (randomf() - 0.5) * 0.075;
+  dy += (randomf() - 0.5) * 0.075;
+  dz += (randomf() - 0.5) * 0.075;
 
   dx *= momentum;
   dy *= momentum;
@@ -468,3 +633,4 @@ void Wanderer::tick() {
   if (y >= 7) { y = 7; dy = -dy; }
   if (z >= 7) { z = 7; dz = -dz; }
 }
+
