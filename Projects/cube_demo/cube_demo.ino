@@ -109,7 +109,7 @@ float randomf() {
 // colors
 byte hue = 0;
 byte hue2 = 0;
-const byte value = 128; // brightness of hue
+const byte value = 196; // brightness of hue
 
 
 //data snake
@@ -316,7 +316,7 @@ void loop() {
       }
       break;
 
-      case 6: // another dumb color thing
+      case 6: // bouncing in rgb space
       FastLED.clear();
 
       bounceX += bounceDX;
