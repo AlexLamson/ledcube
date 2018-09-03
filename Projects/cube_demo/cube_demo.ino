@@ -36,7 +36,7 @@ CRGB leds[512];
 // end cube stuff
 
 byte demoMode = 9; // proj, rain, color sphere, wander, function, trimmed sphere, bouncing in rgb space, color snake, color pyramid, floating points, spheres spinning
-const unsigned int demoTimes[] = {0, 20000, 30000, 20000, 30000, 20000, 10000, 21000, 10000, 15000, 20000};
+const unsigned int demoTimes[] = {0, 20000, 30000, 20000, 30000, 20000, 15000, 21000, 10000, 15000, 20000};
 bool advanceDemo = true; // toggle to stay on one demo forever
 //const unsigned int demoTimes[] = {100, 100, 100, 100, 100, 600000, 100, 100, 100};
 const byte numDemos = 11;
@@ -119,7 +119,7 @@ int snake_frame = 0;
 //bouncing in rgb space
 int cubeScale = 8;
 float bounceX = 0, bounceY = 0, bounceZ = 0;
-float bounceDX = 0.1, bounceDY = 0.2, bounceDZ = 0.3;
+float bounceDX = 0.2, bounceDY = 0.3, bounceDZ = 0.4;
 
 
 // wander
@@ -185,12 +185,12 @@ void setup() {
   Serial.begin(115200);
 
   clear();
+  FastLED.setCorrection( Typical8mmPixel );
   FastLED.show();
 }
 
 void loop() {
   // demo
-  FastLED.setTemperature( Typical8mmPixel );
 
 
   if (demoMode == 0 || (millis() >= lastDemoTime + demoTimes[demoMode] && advanceDemo)) {
@@ -208,22 +208,24 @@ void loop() {
       case 9: beginFloatingPoints(); break;
     }
   }
-  
+
   if (millis() >= lastTickTime + tickMillis) {
     lastTickTime = millis();
+
+    const unsigned long computeStartTime = micros();
 
     switch (demoMode) {
       case 1: // rain
       clear();
-  
+
       for (int i = 0; i < numDrops; i++) {
-        
+
         drops[i].tick();
-        
+
         drops[i].draw();
       }
       break;
-      
+
       case 2: // color sphere
       hue += 2;
 //        setColor( CHSV( hue, 255, value ) );
@@ -240,14 +242,14 @@ void loop() {
         }
       }
       break;
-      
+
       case 3: // wander
       clear(); // looks pretty cool without this to be honest
-        
+
       for (int i = 0; i < numWanderers; i++) {
-          
+
         wanderers[i].tick();
-        
+
         drawSmoothedPixel(wanderers[i].x, wanderers[i].y, wanderers[i].z, wanderers[i].color);
       }
       break;
@@ -308,7 +310,7 @@ void loop() {
 //                leds[ getIndex( i, j, k ) ] = CHSV( hue - byte(offset * 255), 255, hue - byte(offset * 255) );
 //                leds[ getIndex( i, j, k ) ] = CHSV( hue - byte(offset * 255), 255, hue - byte((1.0-((offset-0.5)*2)) * 255) );
             }
-            
+
           }
         }
       }
@@ -337,7 +339,7 @@ void loop() {
           }
         }
       }
-      
+
       break;
 
       case 7: // color snake
@@ -630,7 +632,7 @@ void Wanderer::tick() {
   if (x < 0) { x = 0; dx = -dx; }
   if (y < 0) { y = 0; dy = -dy; }
   if (z < 0) { z = 0; dz = -dz; }
-  
+
   if (x >= 7) { x = 7; dx = -dx; }
   if (y >= 7) { y = 7; dy = -dy; }
   if (z >= 7) { z = 7; dz = -dz; }
