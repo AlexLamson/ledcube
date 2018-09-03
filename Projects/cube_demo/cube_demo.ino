@@ -109,7 +109,7 @@ float randomf() {
 // colors
 byte hue = 0;
 byte hue2 = 0;
-const byte value = 196; // brightness of hue
+const byte value = 192; // brightness of hue
 
 
 //data snake
