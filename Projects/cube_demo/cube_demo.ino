@@ -190,6 +190,8 @@ void setup() {
 
 void loop() {
   // demo
+  FastLED.setTemperature( Typical8mmPixel );
+
 
   if (demoMode == 0 || (millis() >= lastDemoTime + demoTimes[demoMode] && advanceDemo)) {
     lastDemoTime = millis();
