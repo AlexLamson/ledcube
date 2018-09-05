@@ -1,6 +1,11 @@
 LED cube visualizations (in no particular order)
 ================================================
 
+use the wifi somehow
+	allow people to remotely change the demos via the internet / over the local network
+	scroll tweets
+	visualize the weather (AKA fully commit to becoming a weather cube)
+
 trace a 3d path similar to https://youtu.be/6mXM-oGggrM?t=2m50s
 	the hue can change over time to it's easier to see the path
 	the path should be aprox smooth (maybe just like add a random velocity every tick and have it move according to acceleration or something)
