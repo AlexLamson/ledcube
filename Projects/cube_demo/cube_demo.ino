@@ -35,9 +35,9 @@ CRGB leds[512];
 
 // end cube stuff
 
-byte demoMode = 9; // proj, rain, color sphere, wander, function, trimmed sphere, bouncing in rgb space, color snake, color pyramid, floating points, spheres spinning
+byte demoMode = 8; // proj, rain, color sphere, wander, function, trimmed sphere, bouncing in rgb space, color snake, color pyramid, floating points, spheres spinning
 const unsigned int demoTimes[] = {0, 20000, 30000, 20000, 30000, 20000, 15000, 21000, 10000, 15000, 20000};
-bool advanceDemo = true; // toggle to stay on one demo forever
+bool advanceDemo = false; // toggle to stay on one demo forever
 //const unsigned int demoTimes[] = {100, 100, 100, 100, 100, 600000, 100, 100, 100};
 const byte numDemos = 11;
 
@@ -364,7 +364,7 @@ void loop() {
             float dy = float(j) - 3.5;
             float dist = sqrt(dx*dx + dy*dy);
             if(dist >= 4-(k/2)) {
-              leds[ getIndex( i, j, k ) ] = CRGB( 0, 0, 0);
+              leds[ getIndex( i, j, k ) ] = CRGB( 1, 1, 1);
             } else {
               double angle = atan2(dy,dx)/PI;
 //                int temp_value = int(1.0*(7-k)/8*value);
