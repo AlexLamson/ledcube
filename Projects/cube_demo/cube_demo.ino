@@ -368,7 +368,7 @@ void loop() {
             } else {
               double angle = atan2(dy,dx)/PI;
 //                int temp_value = int(1.0*(7-k)/8*value);
-              leds[ getIndex( i, j, k ) ] = CHSV( hue - byte(angle * 128), 255, value);
+              leds[ getIndex( i, j, k ) ] = CHSV( hue - byte(angle * 128), 255, 255);
             }
           }
         }
@@ -637,4 +637,3 @@ void Wanderer::tick() {
   if (y >= 7) { y = 7; dy = -dy; }
   if (z >= 7) { z = 7; dz = -dz; }
 }
-
