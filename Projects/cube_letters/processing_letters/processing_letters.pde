@@ -197,6 +197,12 @@ char[][] font8x8_basic = new char[][]{
     { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}    // U+007F
 };
 
+int getIndex(int x, int y, int z) {
+  return ( (z + y%2)%2 == 0 ? x : 7 - x ) +
+    ( y%2 == 0 ? z*8 : (7 - z) * 8 ) +
+    y * 64;
+}
+
 
 void setup() {
   //open a port so we can use our serial connection to communicate to the physical cube
@@ -214,13 +220,13 @@ void setup() {
   size(640, 480, P3D);
 
   //initialize the cube
-  int i = 0;
   for(int xi = 0; xi < 8; xi++) {
     for(int yi = 0; yi < 8; yi++) {
       for(int zi = 0; zi < 8; zi++) {
+        int i = getIndex(xi, yi, zi);
+        
         leds[i] = new LED((xi-4)*cmBetweenLEDs, (yi-4)*cmBetweenLEDs, (zi-4)*cmBetweenLEDs);
         leds[i].ledColor = color(xi*(256/8), yi*(256/8), zi*(256/8)); //map each axis to a color channel
-        i++;
       }
     }
   } //end cube initialization
@@ -270,7 +276,8 @@ void draw() {
   float maxCubeX = 0;
   float minCubeY = height;
   float maxCubeY = 0;
-  for(LED led : leds) {
+  for(int i = 0; i < 512; i++) {
+    LED led = leds[i];
     float x = screenX(led.position.x, led.position.y, led.position.z);
     float y = screenY(led.position.x, led.position.y, led.position.z);
 
@@ -282,12 +289,7 @@ void draw() {
       minCubeY = y;
     if(y > maxCubeY)
       maxCubeY = y;
-  }
-
-  //byte allRGB[] = new byte[3*512]; //stores frame of all colors to send to arduino
-  //int i = 0;
-  //for(LED led : leds) {
-    
+  }    
     
     
   //  //gamma adjust the colors so they look more natural, then save them to the cube frame buffer
@@ -321,11 +323,12 @@ void draw() {
     int char_index = (int)(message.charAt(messageIndex));
     char[] letter = font8x8_basic[ char_index ];
     
-    int i = 0;
     for(int z = 0; z < 8; z++) {
       for(int y = 0; y < 8; y++) {
         for(int x = 0; x < 8; x++) {
-          char row = letter[7-x];
+          int i = getIndex(x, y, z);
+          
+          char row = letter[7-z];
           String binary_string = String.format("%8s", Integer.toBinaryString((int)row)).replace(' ', '0');
           //println(binary_string);
 
@@ -334,8 +337,8 @@ void draw() {
           int b = (int)blue(bgColor);
           
           
-          boolean led_is_on = binary_string.charAt(y) == '1';
-          if(z == depth && led_is_on) {
+          boolean led_is_on = binary_string.charAt(x) == '1';
+          if(7-y == depth && led_is_on) {
             if(useRainbowText) {
               colorMode(HSB, maxHue);
               color rainbowColor = color(hueIndex, maxHue, maxHue);
@@ -357,8 +360,6 @@ void draw() {
           allRGB[i*3+0] = (byte)gamma[r]; //red
           allRGB[i*3+1] = (byte)gamma[g]; //green
           allRGB[i*3+2] = (byte)gamma[b]; //blue
-          
-          i++;
         }
       }
     }
@@ -373,10 +374,10 @@ void draw() {
     
     PImage img = images.get(imageIndex);
     
-    int i = 0;
     for(int z = 0; z < 8; z++) {
       for(int y = 0; y < 8; y++) {
         for(int x = 0; x < 8; x++) {
+          int i = getIndex(x, y, z);
           int r = 0;
           int g = 0;
           int b = 40;
@@ -392,8 +393,6 @@ void draw() {
           allRGB[i*3+0] = (byte)gamma[r]; //red
           allRGB[i*3+1] = (byte)gamma[g]; //green
           allRGB[i*3+2] = (byte)gamma[b]; //blue
-  
-          i++;
         }
       }
     }
@@ -411,7 +410,8 @@ void draw() {
 
 
   // Move and rotate leds
-  for (LED led : leds) {
+  for(int i = 0; i < 512; i++) {
+    LED led = leds[i];
     led.update();
     led.display();
   }
