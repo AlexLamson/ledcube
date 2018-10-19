@@ -35,15 +35,10 @@ CRGB leds[512];
 
 // end cube stuff
 
-byte demoMode = 8; // proj, rain, color sphere, wander, function, trimmed sphere, bouncing in rgb space, color snake, color pyramid, floating points, spheres spinning
-const unsigned int demoTimes[] = {0, 20000, 30000, 20000, 30000, 20000, 15000, 21000, 10000, 15000, 20000};
-bool advanceDemo = false; // toggle to stay on one demo forever
-//const unsigned int demoTimes[] = {100, 100, 100, 100, 100, 600000, 100, 100, 100};
-const byte numDemos = 11;
-
-// projection
-//byte rgb[3*512];
-//byte brightness = 64;
+byte demoMode = 12; // proj, rain, color sphere, wander, function, trimmed sphere, bouncing in rgb space, color snake, color pyramid, spheres spinning, floating points, intersecting spheres, very intersecting spheres
+const unsigned int demoTimes[] = {0, 20000, 30000, 20000, 30000, 20000, 15000, 21000, 10000, 15000, 0000, 15000, 15000, 15000};
+bool advanceDemo = true; // toggle to stay on one demo forever
+const byte numDemos = 13;
 
 // demos
 
@@ -485,6 +480,36 @@ void loop() {
                   3.5,
                   3.5       + interRadius*cosSA2,
                   sphereRadius, CRGB(255, 0, 0));
+      }
+      break;
+
+
+      case 12: // really intersecting spheres
+      clear ();
+      {
+        sphereAngle += sphereAngleIncremement;
+
+        const float radiusCenter = 5.0, radiusAmplitude = 3.0;
+        const float sphereRadius0 = radiusCenter + radiusAmplitude * cosf(sphereAngle * 0.4),
+                   sphereRadius1 = radiusCenter + radiusAmplitude * cosf(sphereAngle * 0.4 + PI2 * 0.33333333),
+                   sphereRadius2 = radiusCenter + radiusAmplitude * cosf(sphereAngle * 0.4 + PI2 * 0.66666666);
+        const float interRadius = 4.0, cosSA = cosf(sphereAngle), sinSA = sinf(sphereAngle);
+        drawSphereSolid(3.5 + interRadius*cosSA,
+                  3.5       + interRadius*sinSA,
+                  3.5,
+                  sphereRadius0, CRGB(0, 0, 255));
+
+        const float cosSA1 = cosf(sphereAngle + PI2 * 0.33333333), sinSA1 = sinf(sphereAngle + PI2 * 0.33333333);
+        drawSphereSolid(3.5 + interRadius*cosSA1,
+                  3.5       + interRadius*sinSA1,
+                  3.5,
+                  sphereRadius1, CRGB(0, 255, 0));
+
+        const float cosSA2 = cosf(sphereAngle + PI2 * 0.66666666), sinSA2 = sinf(sphereAngle + PI2 * 0.66666666);
+        drawSphereSolid(3.5 + interRadius*cosSA2,
+                  3.5       + interRadius*sinSA2,
+                  3.5,
+                  sphereRadius2, CRGB(255, 0, 0));
       }
       break;
 
