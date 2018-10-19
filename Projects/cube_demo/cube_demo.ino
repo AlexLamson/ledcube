@@ -359,7 +359,7 @@ void loop() {
             float dy = float(j) - 3.5;
             float dist = sqrt(dx*dx + dy*dy);
             if(dist >= 4-(k/2)) {
-              leds[ getIndex( i, j, k ) ] = CRGB( 1, 1, 1);
+              leds[ getIndex( i, j, k ) ] = CRGB( 0, 0, 0);
             } else {
               double angle = atan2(dy,dx)/PI;
 //                int temp_value = int(1.0*(7-k)/8*value);
