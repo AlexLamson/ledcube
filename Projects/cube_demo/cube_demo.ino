@@ -274,10 +274,11 @@ void loop() {
 //            for (int k = int(z-r); k <= int(z+r); k++) {
             for (int k = 0; k < 8; k++) {
 //              if (k >= 0 && k < 8) {
-          float distToCentroid = float(k) - z + r;
-          distToCentroid *= (distToCentroid < 0 ? -1 : 1);
-                byte val = (max(0.0, double(r - distToCentroid)) * rInv) * 255;
-          leds[ getIndex(i, j, k) ] = CRGB(scale8(col.r, val), scale8(col.g, val), scale8(col.b, val));
+              float distToCentroid = float(k) - z + r;
+              distToCentroid *= (distToCentroid < 0 ? -1 : 1);
+              byte val = (max(0.0, double(r - distToCentroid)) * rInv) * 255;
+
+              leds[ getIndex(i, j, k) ] = CRGB(scale8(col.r, val), scale8(col.g, val), scale8(col.b, val));
 //              }
             }
 
@@ -461,6 +462,30 @@ void loop() {
         }
       }
 
+      break;
+
+      case 11: // intersecting spheres
+      clear ();
+      {
+        sphereAngle += sphereAngleIncremement;
+        const float sphereRadius = 1.0, interRadius = 2.0;
+
+        const float cosSA = cosf(sphereAngle*0.5), cosSA1 = cosf(sphereAngle*1.0), cosSA2 = cosf(sphereAngle*1.5);
+        drawSphereSolid(3.5 + interRadius*cosSA,
+                  3.5,
+                  3.5,
+                  sphereRadius, CRGB(0, 0, 255));
+
+        drawSphereSolid(3.5,
+                  3.5 + interRadius*cosSA1,
+                  3.5,
+                  sphereRadius, CRGB(0, 255, 0));
+
+        drawSphereSolid(3.5,
+                  3.5,
+                  3.5       + interRadius*cosSA2,
+                  sphereRadius, CRGB(255, 0, 0));
+      }
       break;
 
 
