@@ -260,7 +260,6 @@ void loop() {
             float dist = sqrt( sqr(dx) + sqr(dy) );
 
             float z = 2.0 * cosf((dist + w) * 1.5) + 4.5; // 3.5 + 1
-//            drawSmoothedPixel(i, j, z, CRGB(255 - i*32, 31 + i*32, j*32));
             float r = 1.5 * cosf(PI + (dist + w) * 3.0) + 2.0;
             r = pow(r, 0.15);
             float rInv = 1.0 / r;
@@ -375,85 +374,85 @@ void loop() {
       clear ();
       {
         sphereAngle += sphereAngleIncremement;
-        const float sphereRadius = 1.0; //, sphereDialation = 0.7;
+        const float sphereRadius = 1.0;
         const float interRadius = 2.0, cosSA = cosf(sphereAngle), sinSA = sinf(sphereAngle);
         const float cosUA = cosf(sphereAngle*0.4), sinUA = sinf(sphereAngle*0.4);
         drawSphereSolid(3.5 + interRadius*cosSA * cosUA,
                   3.5       + interRadius*cosSA * sinUA,
-                  3.5 + interRadius*sinSA, //       * sinSA,
+                  3.5 + interRadius*sinSA,
                   sphereRadius, CRGB(0, 0, 255));
 
-//        const float cosSA1 = cosf(sphereAngle*sphereDialation), sinSA1 = sinf(sphereAngle*sphereDialation);
         const float cosSA1 = cosf(sphereAngle + PI2 * 0.33333333), sinSA1 = sinf(sphereAngle + PI2 * 0.33333333);
         drawSphereSolid(3.5 + interRadius*cosSA1  * cosUA,
                   3.5       + interRadius*cosSA1  * sinUA,
-                  3.5 + interRadius*sinSA1, //        * sinSA,
+                  3.5 + interRadius*sinSA1,
                   sphereRadius, CRGB(0, 255, 0));
 
-//        const float cosSA2 = cosf(sphereAngle*sqr(sphereDialation)), sinSA2 = sinf(sphereAngle*sqr(sphereDialation));
         const float cosSA2 = cosf(sphereAngle + PI2 * 0.66666666), sinSA2 = sinf(sphereAngle + PI2 * 0.66666666);
         drawSphereSolid(3.5 + interRadius*cosSA2  * cosUA,
                   3.5       + interRadius*cosSA2  * sinUA,
-                  3.5 + interRadius*sinSA2, //        * sinSA,
+                  3.5 + interRadius*sinSA2,
                   sphereRadius, CRGB(255, 0, 0));
       }
       break;
 
       case 10: // floating points
       clear();
-      const float dMotionMax = 0.005;
-      floatDMotion.x += (randomf() - 0.5) * 0.001;
-      floatDMotion.y += (randomf() - 0.5) * 0.001;
-      floatDMotion.z += (randomf() - 0.5) * 0.001;
-      if (abs(floatDMotion.x) > dMotionMax)
-        floatDMotion.x *= 0.9;
-      if (abs(floatDMotion.y) > dMotionMax)
-        floatDMotion.y *= 0.9;
-      if (abs(floatDMotion.z) > dMotionMax)
-        floatDMotion.z *= 0.9;
+      {
+        const float dMotionMax = 0.005;
+        floatDMotion.x += (randomf() - 0.5) * 0.001;
+        floatDMotion.y += (randomf() - 0.5) * 0.001;
+        floatDMotion.z += (randomf() - 0.5) * 0.001;
+        if (abs(floatDMotion.x) > dMotionMax)
+          floatDMotion.x *= 0.9;
+        if (abs(floatDMotion.y) > dMotionMax)
+          floatDMotion.y *= 0.9;
+        if (abs(floatDMotion.z) > dMotionMax)
+          floatDMotion.z *= 0.9;
 
-      floatMotion.x += floatDMotion.x;
-      floatMotion.y += floatDMotion.y;
-      floatMotion.z += floatDMotion.z;
+        floatMotion.x += floatDMotion.x;
+        floatMotion.y += floatDMotion.y;
+        floatMotion.z += floatDMotion.z;
 
-      const float motionCurb = 0.9; // smoothly approach a top speed
-      floatMotion.x *= motionCurb;
-      floatMotion.y *= motionCurb;
-      floatMotion.z *= motionCurb;
+        const float motionCurb = 0.9; // smoothly approach a top speed
+        floatMotion.x *= motionCurb;
+        floatMotion.y *= motionCurb;
+        floatMotion.z *= motionCurb;
 
-      // TODO rotation figuring
+        // TODO rotation figuring
 
-      // apply the motion to points and draw
-      for (int i = 0; i < numPoints; i++) {
-        points[i].x += floatMotion.x;
-        points[i].y += floatMotion.y;
-        points[i].z += floatMotion.z;
+        // apply the motion to points and draw
+        for (int i = 0; i < numPoints; i++) {
+          points[i].x += floatMotion.x;
+          points[i].y += floatMotion.y;
+          points[i].z += floatMotion.z;
 
-        // if the point is out of bounds replace it on the edge (don't care if it gets replaced next tick)
-        // TODO make uniform with respect to the direction you're moving
-        if (points[i].x < -1 || points[i].x > 9 ||
-            points[i].y < -1 || points[i].y > 9 ||
-            points[i].z < -1 || points[i].z > 9) {
+          // if the point is out of bounds replace it on the edge (don't care if it gets replaced next tick)
+          // TODO make uniform with respect to the direction you're moving
+          if (points[i].x < -1 || points[i].x > 9 ||
+              points[i].y < -1 || points[i].y > 9 ||
+              points[i].z < -1 || points[i].z > 9) {
 
-          float side = 10 * random(2) - 1; // pick one edge or the other
-          float randu= randomf() * 10 - 1;
-          float randv= randomf() * 10 - 1;
+            float side = 10 * random(2) - 1; // pick one edge or the other
+            float randu= randomf() * 10 - 1;
+            float randv= randomf() * 10 - 1;
 
-          switch (random(3)) {
-          case 0: // x
-            points[i].x = side; points[i].y = randu; points[i].z = randv;
-            break;
-          case 1: // y
-            points[i].y = side; points[i].x = randu; points[i].z = randv;
-            break;
-          case 2: // z
-            points[i].z = side; points[i].x = randu; points[i].y = randv;
-            break;
+            switch (random(3)) {
+            case 0: // x
+              points[i].x = side; points[i].y = randu; points[i].z = randv;
+              break;
+            case 1: // y
+              points[i].y = side; points[i].x = randu; points[i].z = randv;
+              break;
+            case 2: // z
+              points[i].z = side; points[i].x = randu; points[i].y = randv;
+              break;
+            }
+
+            floatColors[i] = CHSV(random(256), 255, 255);
+          } else {
+            drawSmoothedPixel(points[i].x, points[i].y, points[i].z, floatColors[i]);
           }
-
-          floatColors[i] = CHSV(random(256), 255, 255);
-        } else {
-          drawSmoothedPixel(points[i].x, points[i].y, points[i].z, floatColors[i]);
         }
       }
 
@@ -528,9 +527,6 @@ void loop() {
 
 void drawSmoothedPixel(float x, float y, float z, CRGB color) {
 
-//  for (int i = int(x - 1); i <= int(x + 1); i++) {
-//    for (int j = int(y - 1); j <= int(y + 1); j++) {
-//      for (int k = int(z - 1); k <= int(z + 1); k++) {
   for (int i = int(x); i <= int(x + 1); i++) {
     for (int j = int(y); j <= int(y + 1); j++) {
       for (int k = int(z); k <= int(z + 1); k++) {
