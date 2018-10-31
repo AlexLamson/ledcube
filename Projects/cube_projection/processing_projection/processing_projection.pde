@@ -11,7 +11,7 @@ boolean useImage = true; //true = show image, false = show webcam
 int ledsPerEdge = 8; //number of LEDs per edge
 float cmBetweenLEDs = 3.5;
 float cmCameraToCube = 100;
-boolean spinCube = true;
+boolean spinCube = false;
 float cubeSpinSpeed = 100;//1=slow, 10=fast
 
 
@@ -53,6 +53,11 @@ int gamma[] = {
   177,180,182,184,186,189,191,193,196,198,200,203,205,208,210,213,
   215,218,220,223,225,228,231,233,236,239,241,244,247,249,252,255 };
 
+int getIndex(int x, int y, int z) {
+  return ( (z + y%2)%2 == 0 ? x : 7 - x ) +
+    ( y%2 == 0 ? z*8 : (7 - z) * 8 ) +
+    y * 64;
+}
 
 void setup() {
   if(useImage) {
@@ -81,16 +86,39 @@ void setup() {
 
 
   //initialize the cube
-  int i = 0;
+  //for(int i = 0; i < 512; i++) {
+  //  //int xi = int(i /64);
+  //  //int yi = int((i/8) % 8);
+  //  //int zi = int(i % 8);
+  //  int xi = int(i>>6);
+  //  int yi = int((i>>3) % 8);
+  //  int zi = int(i % 8);
+
+  //  leds[i] = new LED((xi-4)*cmBetweenLEDs, (yi-4)*cmBetweenLEDs, (zi-4)*cmBetweenLEDs);
+  //  leds[i].ledColor = color(xi*(256/8), yi*(256/8), zi*(256/8)); //map each axis to a color channel
+  //}
+
   for(int xi = 0; xi < 8; xi++) {
     for(int yi = 0; yi < 8; yi++) {
       for(int zi = 0; zi < 8; zi++) {
+        int i = getIndex(xi, yi, zi);
+        
         leds[i] = new LED((xi-4)*cmBetweenLEDs, (yi-4)*cmBetweenLEDs, (zi-4)*cmBetweenLEDs);
         leds[i].ledColor = color(xi*(256/8), yi*(256/8), zi*(256/8)); //map each axis to a color channel
-        i++;
       }
     }
   } //end cube initialization
+
+  //int i = 0;
+  //for(int xi = 0; xi < 8; xi++) {
+  //  for(int yi = 0; yi < 8; yi++) {
+  //    for(int zi = 0; zi < 8; zi++) {
+  //      leds[i] = new LED((xi-4)*cmBetweenLEDs, (yi-4)*cmBetweenLEDs, (zi-4)*cmBetweenLEDs);
+  //      leds[i].ledColor = color(xi*(256/8), yi*(256/8), zi*(256/8)); //map each axis to a color channel
+  //      i++;
+  //    }
+  //  }
+  //} //end cube initialization
 } //end setup()
 
 
@@ -171,8 +199,8 @@ void draw() {
   }
 
   byte allRGB[] = new byte[3*512]; //stores frame of all colors to send to arduino
-  int i = 0;
-  for(LED led : leds) {
+  for(int i = 0; i < 512; i++) {
+    LED led = leds[i];
     float xImagePos = screenX(led.position.x, led.position.y, led.position.z);
     float yImagePos = screenY(led.position.x, led.position.y, led.position.z);
     
@@ -188,7 +216,8 @@ void draw() {
       //project the (flipped) camera onto the cube
       int x = (int)map(xImagePos, minCubeX, maxCubeX, 0, cam.width);
       int y = (int)map(yImagePos, minCubeY, maxCubeY, 0, cam.height);
-      pixelColor = cam.get(cam.width-x, y);
+      //pixelColor = cam.get(cam.width-x, y);
+      pixelColor = cam.get(x, y);
     }
     
     //make each LED slightly transparent
@@ -199,7 +228,6 @@ void draw() {
     allRGB[i*3+0] = (byte)gamma[(int)red(pixelColor)];
     allRGB[i*3+1] = (byte)gamma[(int)green(pixelColor)];
     allRGB[i*3+2] = (byte)gamma[(int)blue(pixelColor)];
-    i++;
   }
 
   //send the frame to the arduino
