@@ -23,7 +23,6 @@ int getIndex(int, int, int);
 void clear();
 void setColor(CRGB);
 
-void drawSmoothedPixel(float, float, float, CRGB);
 byte mapBrightness(float);
 
 CRGB leds[512];
@@ -34,9 +33,12 @@ CRGB leds[512];
 #define ENV_HEIGHT 8
 #define ENV_DEPTH 8
 
-byte snakeHeadHue = 128;
-const byte snakeHueDelta = 5;
+byte snakeHeadHue = 0;
+const byte snakeHueDelta = 8;
 uint32_t foodColor = 0xFFFFFF;
+
+byte playerOrientation = 0;
+byte orientationMap(byte);
 
 struct node {
   byte x;
@@ -193,27 +195,27 @@ void loop() {
 
     switch (keyCode[0]) {
       case 37: // left
-      newDir = 0;
+      newDir = orientationMap(0);
       break;
 
       case 39: // right
-      newDir = 3;
+      newDir = orientationMap(3);
       break;
 
       case 38: // up
-      newDir = 1;
+      newDir = orientationMap(1);
       break;
 
       case 40: // down
-      newDir = 4;
+      newDir = orientationMap(4);
       break;
 
       case 65: // a (left)
-      newDir = 0;
+      newDir = orientationMap(0);
       break;
 
       case 68: // d (right)
-      newDir = 3;
+      newDir = orientationMap(3);
       break;
 
       case 87: // w (in)
@@ -231,6 +233,15 @@ void loop() {
 
       case 45: // - (decrease speed)
       tickMillis += 50; // increase wait time
+      break;
+
+
+      case 85: // u (rotate controls left)
+      playerOrientation = (playerOrientation + 1) % 4;
+      break;
+
+      case 73: // i (rotate controls right)
+      playerOrientation = (playerOrientation + 3) % 4;
       break;
     }
 
@@ -255,35 +266,42 @@ bool isInsideSnake(byte x, byte y, byte z, bool includeHead) {
 
 // ----
 
-// should be easy to make this work for a linear image
-void drawSmoothedPixel(float x, float y, float z, CRGB color) {
-
-  for (int i = int(x - 1); i <= int(x + 1); i++) {
-    for (int j = int(y - 1); j <= int(y + 1); j++) {
-      for (int k = int(z - 1); k <= int(z + 1); k++) {
-        
-        if (!(i < 0 || j < 0 || k < 0 || i >= 8 || j >= 8 || k >= 8)) {
-          float compX = x - i, compY  = y - j, compZ = z - k;
-          float dist = sqrt( pow(compX, 2) + pow(compY, 2) + pow(compZ, 2) );
-          
-          float normBrightness = max(0, 1.0-dist);
-          byte brightness = mapBrightness(normBrightness);
-
-          byte cx = i, cy = j, cz = k;
-  
-          leds[ getIndex(cx, cy, cz) ] += CRGB( scale8(color.r, brightness), scale8(color.g, brightness), scale8(color.b, brightness) );
-        }
-        
-      }
+byte orientationMap(byte d) {
+  if (playerOrientation == 0)
+    return d;
+  if (playerOrientation == 2) {
+    switch (d) {
+    case 0: return 3;
+    case 3: return 0;
+    case 1: return 4;
+    case 4: return 1;
     }
   }
+  if (playerOrientation == 1) {
+    switch (d) {
+    case 0: return 4;
+    case 3: return 1;
+    case 1: return 0;
+    case 4: return 3;
+    }
+  }
+  if (playerOrientation == 3) {
+    switch (d) {
+    case 0: return 4;
+    case 3: return 1;
+    case 1: return 0;
+    case 4: return 3;
+    }
+  }
+
+  return d;
 }
 
 int getIndex(int x, int y, int z) {
   // consider the last installed slice to be the front (y = 0), with left having x=0, and bottom z=0
 
   return ( (z + y%2)%2 == 0 ? x : 7 - x ) +
-    ( y%2 == 0 ? z*8 : (7 - z) * 8 ) + 
+    ( y%2 == 0 ? z*8 : (7 - z) * 8 ) +
     y * 64;
 }
 
