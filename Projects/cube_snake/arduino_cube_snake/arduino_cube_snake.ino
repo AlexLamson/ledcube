@@ -33,7 +33,7 @@ CRGB leds[512];
 #define ENV_HEIGHT 8
 #define ENV_DEPTH 8
 
-byte snakeHeadHue = 0;
+byte snakeHeadHue;
 const byte snakeHueDelta = 8;
 uint32_t foodColor = 0xFFFFFF;
 
@@ -76,19 +76,21 @@ void setup() {
   snakeInit();
 }
 
+byte len;
+
 void snakeInit() {
   lastTickMillis = millis();
 
   byte start_x = 2;
   byte start_y = 2;
   byte start_z = 2;
-  byte len = 3;
+  len = 3;
 
   food_x = 5;
   food_y = 5;
   food_z = 5;
 
-  snakeHeadHue = 128;
+  snakeHeadHue = 0;
 
   dir = 0;
   newDir = 0;
@@ -167,14 +169,23 @@ void loop() {
         food_z = random(ENV_DEPTH - 2) + 1;
       } while (isInsideSnake(food_x, food_y, food_z, true));
 
+      len++;
+
       leds[getIndex(food_x, food_y, food_z)] = foodColor;
     } else {
       leds[getIndex(tail->x, tail->y, tail->z)] = 0x000000;
       tail = tail->next;
     }
 
-    leds[getIndex(head->x, head->y, head->z)] = CHSV(snakeHeadHue, 255, 255);
-    snakeHeadHue += snakeHueDelta;
+//    leds[getIndex(head->x, head->y, head->z)] = CHSV(snakeHeadHue, 255, 255);
+    node* currNode = tail;
+    byte i = len;
+    while (currNode != NULL) {
+        leds[getIndex(currNode->x, currNode->y, currNode->z)] = CHSV(snakeHeadHue - (--i)*snakeHueDelta, 255, ((len-i)%3==1 ? 128 : 255));
+        currNode = currNode->next;
+    }
+
+//    snakeHeadHue += snakeHueDelta;
 
     if (head->x < 0 || head->x >= ENV_WIDTH ||
         head->y < 0 || head->y >= ENV_HEIGHT ||
