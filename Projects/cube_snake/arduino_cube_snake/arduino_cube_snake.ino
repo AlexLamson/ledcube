@@ -34,8 +34,9 @@ CRGB leds[512];
 #define ENV_HEIGHT 8
 #define ENV_DEPTH 8
 
-uint32_t snake_color = 0x0000FF;
-uint32_t food_color = 0xFF0000;
+byte snakeHeadHue = 128;
+const byte snakeHueDelta = 5;
+uint32_t foodColor = 0xFFFFFF;
 
 struct node {
   byte x;
@@ -51,7 +52,7 @@ byte food_x;
 byte food_y;
 byte food_z;
 
-const int tickMillis = 200;
+int tickMillis = 200;
 unsigned long lastTickMillis = 0;
 
 byte dir = 0;
@@ -67,15 +68,15 @@ void setup() {
   FastLED.addLeds<WS2812B, DATA3>(leds, 384, 128);
 
   Serial.begin(115200);
-  
+
   FastLED.clear();
-  
+
   snakeInit();
 }
 
 void snakeInit() {
   lastTickMillis = millis();
-  
+
   byte start_x = 2;
   byte start_y = 2;
   byte start_z = 2;
@@ -85,15 +86,17 @@ void snakeInit() {
   food_y = 5;
   food_z = 5;
 
+  snakeHeadHue = 128;
+
   dir = 0;
   newDir = 0;
- 
+
   head = new struct node();
   head->x = start_x;
   head->y = start_y;
   head->z = start_z;
-  leds[getIndex(start_x, start_y, start_z)] = snake_color;
-  
+  leds[getIndex(start_x, start_y, start_z)] = CHSV(snakeHeadHue, 255, 255);
+
   struct node* lastNode = head;
   byte count = 1;
   while (count++ < len) {
@@ -102,14 +105,16 @@ void snakeInit() {
     newNode->y = start_y;
     newNode->z = start_z;
     newNode->next = lastNode;
-    
+
     lastNode = newNode;
-    
-    leds[getIndex(lastNode->x, lastNode->y, lastNode->z)] = snake_color;
+
+    leds[getIndex(lastNode->x, lastNode->y, lastNode->z)] = CHSV(snakeHeadHue - snakeHueDelta * count, 255, 255);
   }
   tail = lastNode;
-  
-  leds[getIndex(food_x, food_y, food_z)] = food_color;
+
+  snakeHeadHue += snakeHueDelta;
+
+  leds[getIndex(food_x, food_y, food_z)] = foodColor;
 
   FastLED.show();
 }
@@ -117,9 +122,9 @@ void snakeInit() {
 void loop() {
   if (millis() >= lastTickMillis + tickMillis) {
     lastTickMillis = millis();
-    
+
     dir = newDir;
-    
+
     struct node* newHead = new struct node();
     newHead->x = head->x;
     newHead->y = head->y;
@@ -128,59 +133,60 @@ void loop() {
       case 0:
       newHead->x += 1;
       break;
-      
+
       case 1:
       newHead->y += 1;
       break;
-      
+
       case 2:
       newHead->z += 1;
       break;
-      
+
       case 3:
       newHead->x -= 1;
       break;
-      
+
       case 4:
       newHead->y -= 1;
       break;
-      
+
       case 5:
       newHead->z -= 1;
       break;
     }
-    
+
     head->next = newHead;
     head = head->next;
 
     if (head->x == food_x && head->y == food_y && head->z == food_z) {
       do {
-        food_x = random(ENV_WIDTH);
-        food_y = random(ENV_HEIGHT);
-        food_z = random(ENV_DEPTH);
+        food_x = random(ENV_WIDTH - 2) + 1;
+        food_y = random(ENV_HEIGHT - 2) + 1;
+        food_z = random(ENV_DEPTH - 2) + 1;
       } while (isInsideSnake(food_x, food_y, food_z, true));
-      
-      leds[getIndex(food_x, food_y, food_z)] = food_color;
+
+      leds[getIndex(food_x, food_y, food_z)] = foodColor;
     } else {
       leds[getIndex(tail->x, tail->y, tail->z)] = 0x000000;
       tail = tail->next;
     }
-    
-    leds[getIndex(head->x, head->y, head->z)] = snake_color;
 
-    if (head->x < 0 || head->x >= ENV_WIDTH || 
-        head->y < 0 || head->y >= ENV_HEIGHT || 
+    leds[getIndex(head->x, head->y, head->z)] = CHSV(snakeHeadHue, 255, 255);
+    snakeHeadHue += snakeHueDelta;
+
+    if (head->x < 0 || head->x >= ENV_WIDTH ||
+        head->y < 0 || head->y >= ENV_HEIGHT ||
         head->z < 0 || head->z >= ENV_DEPTH ||
         isInsideSnake(head->x, head->y, head->z, false)) {
       delay(1000);
       FastLED.clear();
       snakeInit();
     }
-  
+
     FastLED.show();
   }
 
-  
+
   if (Serial.available()) {
     byte keyCode[1];
     Serial.readBytes(keyCode, 1);
@@ -216,6 +222,15 @@ void loop() {
 
       case 83: // s (out)
       newDir = 5;
+      break;
+
+
+      case 61: // + (increase speed)
+      tickMillis -= 50; // reduce wait time
+      break;
+
+      case 45: // - (decrease speed)
+      tickMillis += 50; // increase wait time
       break;
     }
 
@@ -266,7 +281,7 @@ void drawSmoothedPixel(float x, float y, float z, CRGB color) {
 
 int getIndex(int x, int y, int z) {
   // consider the last installed slice to be the front (y = 0), with left having x=0, and bottom z=0
-  
+
   return ( (z + y%2)%2 == 0 ? x : 7 - x ) +
     ( y%2 == 0 ? z*8 : (7 - z) * 8 ) + 
     y * 64;
