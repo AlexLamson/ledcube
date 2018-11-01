@@ -204,61 +204,63 @@ void loop() {
     byte keyCode[1];
     Serial.readBytes(keyCode, 1);
 
+    byte incomingDir = dir;
+
     switch (keyCode[0]) {
       case 37: // left
-      newDir = orientationMap(0);
+        incomingDir = orientationMap(0);
       break;
 
       case 39: // right
-      newDir = orientationMap(3);
+        incomingDir = orientationMap(3);
       break;
 
       case 38: // up
-      newDir = orientationMap(1);
+        incomingDir = orientationMap(1);
       break;
 
       case 40: // down
-      newDir = orientationMap(4);
+        incomingDir = orientationMap(4);
       break;
 
       case 65: // a (left)
-      newDir = orientationMap(0);
+        incomingDir = orientationMap(0);
       break;
 
       case 68: // d (right)
-      newDir = orientationMap(3);
+        incomingDir = orientationMap(3);
       break;
 
       case 87: // w (in)
-      newDir = 2;
+        incomingDir = 2;
       break;
 
       case 83: // s (out)
-      newDir = 5;
+        incomingDir = 5;
       break;
 
 
       case 61: // + (increase speed)
-      tickMillis -= 50; // reduce wait time
+        tickMillis -= 50; // reduce wait time
       break;
 
       case 45: // - (decrease speed)
-      tickMillis += 50; // increase wait time
+        tickMillis += 50; // increase wait time
       break;
 
 
       case 85: // u (rotate controls left)
-      playerOrientation = (playerOrientation + 1) % 4;
+        playerOrientation = (playerOrientation + 1) % 4;
       break;
 
       case 73: // i (rotate controls right)
-      playerOrientation = (playerOrientation + 3) % 4;
+        playerOrientation = (playerOrientation + 3) % 4;
       break;
     }
 
     // prevent going backwards
-    if (newDir % 3 == dir % 3) {
-      newDir = dir;
+    if (incomingDir % 3 != dir % 3) {
+      newDir = incomingDir;
     }
   }
 }
