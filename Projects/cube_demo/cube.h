@@ -22,6 +22,16 @@ extern float cosf(float);
 float sinf(float);
 float randomf();
 
+#ifndef CONVENIENCE_STRUCTS_
+#define CONVENIENCE_STRUCTS_
+
+//convenience structs
+typedef struct {
+  float x, y, z;
+} float3;
+
+#endif /* CONVENIENCE_STRUCTS_*/
+
 // convenience functions
 int getIndex(int x, int y, int z);
 

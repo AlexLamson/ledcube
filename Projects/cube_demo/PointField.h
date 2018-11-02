@@ -14,15 +14,11 @@
 
 class PointField: public Demo {
 private:
-  typedef struct {
-    float x, y, z;
-  } point;
-
   static const int numPoints = 32;
-  point points[numPoints];
+  float3 points[numPoints];
   CRGB colors[numPoints];
-  point motion = {0, 0, 0};
-  point dMotion= {0, 0, 0};
+  float3 motion = {0, 0, 0};
+  float3 dMotion= {0, 0, 0};
   float rotZ = 0.0;
   float dRotZ = 0.0;
 public:
