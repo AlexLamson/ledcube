@@ -30,9 +30,9 @@ void cubeBegin() {
   FastLED.addLeds<WS2812B, DATA3>(leds, 384, 128);
 }
 
-//math
-//#define PI 3.14159265359
-//#define PI2 6.28308530718
+// math
+// #define PI 3.14159265359
+// #define PI2 6.28308530718
 float sqr(float x) {
   return x*x;
 }
@@ -96,11 +96,11 @@ void drawSmoothedPixel(float x, float y, float z, CRGB color) {
         if (!(i < 0 || j < 0 || k < 0 || i >= 8 || j >= 8 || k >= 8)) {
           float compX = x - i, compY  = y - j, compZ = z - k;
           float dist = sqrt( sqr(compX) + sqr(compY) + sqr(compZ) );
-//
-//          float normBrightness = max(0.0, 1.0-dist);
-//          byte brightness = mapBrightness(normBrightness);
+
+          // float normBrightness = max(0.0, 1.0-dist);
+          // byte brightness = mapBrightness(normBrightness);
           byte brightness = byte(255.0*max(0.0, 1.0 - dist));
-//
+
           byte cx = i, cy = j, cz = k;
 
           leds[ getIndex(cx, cy, cz) ] += CRGB( scale8(color.r, brightness), scale8(color.g, brightness), scale8(color.b, brightness) );
@@ -153,8 +153,8 @@ void drawCubeSolid(
   const float outsideCutoff = 1.0;
   const float outsideCutoffInv = 1.0;
 
-//  float cosAngle = cosf(rAngle);
-//  float sinAngle = sinf(rAngle);
+  // float cosAngle = cosf(rAngle);
+  // float sinAngle = sinf(rAngle);
   float cosAngle = cos(rAngle); // jittery if using the optimized cos, sin
   float sinAngle = sin(rAngle);
 
@@ -210,15 +210,15 @@ void drawCubeSolid(
           continue;
 
         float distSqr = sqr(max(xdist, 0.0f)) + sqr(max(ydist, 0.0f)) + sqr(max(zdist, 0.0f));
-//        float distSqr = max(xdist, 0.0f) + max(ydist, 0.0f) + max(zdist, 0.0f);
+        // float distSqr = max(xdist, 0.0f) + max(ydist, 0.0f) + max(zdist, 0.0f);
 
 
         // debug color
-//        color = CRGB(
-//            byte(150.0 * (xdist_ + sx2) * sx_) + 40,
-//            byte(150.0 * (ydist_ + sy2) * sy_) + 40,
-//            byte(150.0 * (zdist_ + sz2) * sz_) + 40
-//        );
+        // color = CRGB(
+        //   byte(150.0 * (xdist_ + sx2) * sx_) + 40,
+        //   byte(150.0 * (ydist_ + sy2) * sy_) + 40,
+        //   byte(150.0 * (zdist_ + sz2) * sz_) + 40
+        // );
 
         if (distSqr <= 0) { // fully inside cube
           leds[ getIndex(i, j, k) ] = color;
@@ -234,9 +234,9 @@ void drawCubeSolid(
 
 
 // unused after gamma correction - also is pretty inefficient
-//byte mapBrightness(float input) {
-//  return 255*(0.5-cosf( PI * pow(input, 1.5) )*0.5); // power of 1.5 seems to preserve brightness pretty well.
-//}
+// byte mapBrightness(float input) {
+//   return 255*(0.5-cosf( PI * pow(input, 1.5) )*0.5); // power of 1.5 seems to preserve brightness pretty well.
+// }
 
 // only used in Rain demo, does it work?
 CRGB scaleColor(CRGB color, byte brightness) {

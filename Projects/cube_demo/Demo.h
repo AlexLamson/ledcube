@@ -12,11 +12,11 @@ class Demo
 {
 
 public:
-   int duration;
+  int duration;
 
   Demo(){ duration = 0; }
   virtual ~Demo(){}
-  virtual void initialize() = 0;    // "= 0" part makes this method pure virtual, and
+  virtual void initialize() = 0; // "= 0" part makes this method pure virtual, and
                                  // also makes this class abstract.
   virtual void tick() = 0;
 };

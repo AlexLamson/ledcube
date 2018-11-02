@@ -11,7 +11,7 @@ extern CRGB leds[];
 
 void cubeBegin();
 
-//math
+// math
 #define PI 3.14159265359
 #define PI2 6.28308530718
 float sqr(float);
@@ -25,7 +25,7 @@ float randomf();
 #ifndef CONVENIENCE_STRUCTS_
 #define CONVENIENCE_STRUCTS_
 
-//convenience structs
+// convenience structs
 typedef struct {
   float x, y, z;
 } float3;

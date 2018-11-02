@@ -2,10 +2,10 @@
 #include <FastLED.h>
 
 // pins for wemos d1
-//#define DATA0 13 // D7
-//#define DATA1 12 // D6
-//#define DATA2 14 // D5
-//#define DATA3 4  // D4
+// #define DATA0 13 // D7
+// #define DATA1 12 // D6
+// #define DATA2 14 // D5
+// #define DATA3 4  // D4
 
 // pins for wemos d1 mini
 #define DATA0 5  // D1
@@ -14,10 +14,10 @@
 #define DATA3 2  // D4
 
 // pins for arduino uno
-//#define DATA0 7
-//#define DATA1 6
-//#define DATA2 5
-//#define DATA3 4
+// #define DATA0 7
+// #define DATA1 6
+// #define DATA2 5
+// #define DATA3 4
 
 CRGB getPixel(int, int, int);
 int getIndex(int, int, int);

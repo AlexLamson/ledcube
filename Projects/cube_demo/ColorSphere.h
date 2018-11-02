@@ -20,6 +20,4 @@ public:
   void tick();
 };
 
-
-
 #endif /* COLORSPHERE_H_ */

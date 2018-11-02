@@ -23,7 +23,7 @@ void ColorSphereTrimmed::initialize() {
 void ColorSphereTrimmed::tick() {
   hue += 1;
   hue2 += 3;
-//        setColor( CHSV( hue, 255, value ) );
+  // setColor( CHSV( hue, 255, value ) );
   for (byte i = 0; i < 8; i++) {
     for (byte j = 0; j < 8; j++) {
       for (byte k = 0; k < 8; k++) {
@@ -35,10 +35,10 @@ void ColorSphereTrimmed::tick() {
         if(dist > 4) {
           leds[ getIndex( i, j, k ) ] = CRGB( 0, 0, 0 );
         } else {
-//                leds[ getIndex( i, j, k ) ] = CHSV( hue - byte(offset * 255), 255, byte(offset * 255) - hue );
+          // leds[ getIndex( i, j, k ) ] = CHSV( hue - byte(offset * 255), 255, byte(offset * 255) - hue );
           leds[ getIndex( i, j, k ) ] = CHSV( hue - byte(offset * 255), 255, cubicwave8(hue2 - byte(offset * 255)) );
-//                leds[ getIndex( i, j, k ) ] = CHSV( hue - byte(offset * 255), 255, hue - byte(offset * 255) );
-//                leds[ getIndex( i, j, k ) ] = CHSV( hue - byte(offset * 255), 255, hue - byte((1.0-((offset-0.5)*2)) * 255) );
+          // leds[ getIndex( i, j, k ) ] = CHSV( hue - byte(offset * 255), 255, hue - byte(offset * 255) );
+          // leds[ getIndex( i, j, k ) ] = CHSV( hue - byte(offset * 255), 255, hue - byte((1.0-((offset-0.5)*2)) * 255) );
         }
 
       }
