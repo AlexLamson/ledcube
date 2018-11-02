@@ -8,8 +8,8 @@
 #ifndef COLORSPHERE_H_
 #define COLORSPHERE_H_
 
-#include "Arduino.h"
 #include "Demo.h"
+#include "Arduino.h"
 
 class ColorSphere: public Demo {
 private:
