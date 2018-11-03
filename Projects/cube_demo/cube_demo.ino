@@ -35,6 +35,7 @@
 #include "SpheresIntersecting.h"
 #include "SpheresIntersectingBigger.h"
 #include "Rain.h"
+#include "BallsBouncing.h"
 
 const byte tickMillis = 20;
 unsigned long lastTickTime = 0;
@@ -42,7 +43,7 @@ unsigned long lastDemoTime = 0;
 
 byte demoMode = 0;
 bool advanceDemo = true;
-const byte numDemos = 12;
+const byte numDemos = 13;
 Demo* demos[ numDemos ] = {
     new ColorSphere(),
     new Wander(),
@@ -55,7 +56,8 @@ Demo* demos[ numDemos ] = {
     new PointField(),
     new SpheresIntersecting(),
     new SpheresIntersectingBigger(),
-    new Rain()
+    new Rain(),
+    new BallsBouncing()
 };
 
 void setup()
@@ -67,6 +69,8 @@ void setup()
   FastLED.clear();
   FastLED.setCorrection( Typical8mmPixel );
   FastLED.show();
+
+  demos[demoMode]->initialize();
 }
 
 void loop()

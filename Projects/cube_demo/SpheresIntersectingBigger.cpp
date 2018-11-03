@@ -33,7 +33,7 @@ void SpheresIntersectingBigger::tick() {
         3.5 + interRadius*sinSA,
         3.5,
         sphereRadius0,
-        CRGB(0, 0, 255));
+        CRGB(0, 0, 128));
 
     const float cosSA1 = cosf(angle + PI2 * 0.33333333), sinSA1 = sinf(angle + PI2 * 0.33333333);
     drawSphereSolid(
@@ -41,7 +41,7 @@ void SpheresIntersectingBigger::tick() {
         3.5 + interRadius*sinSA1,
         3.5,
         sphereRadius1,
-        CRGB(0, 255, 0));
+        CRGB(0, 128, 0));
 
     const float cosSA2 = cosf(angle + PI2 * 0.66666666), sinSA2 = sinf(angle + PI2 * 0.66666666);
     drawSphereSolid(
@@ -49,7 +49,7 @@ void SpheresIntersectingBigger::tick() {
         3.5 + interRadius*sinSA2,
         3.5,
         sphereRadius2,
-        CRGB(255, 0, 0));
+        CRGB(128, 0, 0));
   }
 
 }
