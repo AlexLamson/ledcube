@@ -51,3 +51,5 @@ void drawSmoothedPixel(float x, float y, float z, CRGB color);
 void drawSphereSolid(float x, float y, float z, float r, CRGB color);
 
 void drawCubeSolid(float cx, float cy, float cz, float sx, float sy, float sz, float rx, float ry, float rz, float rAngle, CRGB color);
+
+void drawLine(float x1, float y1, float z1, float x2, float y2, float z2, CRGB color);

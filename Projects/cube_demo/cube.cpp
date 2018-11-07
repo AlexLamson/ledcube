@@ -232,6 +232,56 @@ void drawCubeSolid(
   }
 }
 
+void drawLine(float x1, float y1, float z1, float x2, float y2, float z2, CRGB color) {
+  byte xSmallest = int(min(x1, x2)), ySmallest = int(min(y1, y2)), zSmallest = int(min(z1, z2));
+  byte xLargest = 1+int(max(x1, x2)), yLargest = 1+int(max(y1, y2)), zLargest = 1+int(max(z1, z2));
+
+  float x12 = x2 - x1, y12 = y2 - y1, z12 = z2 - z1;
+  float lDistSqr = sqr(x12) + sqr(y12) + sqr(z12);
+  float lDist = sqrt(lDistSqr);
+  float lDist_inv = 1.0 / lDist;
+  float lDistSqr_inv = 1.0 / lDistSqr;
+
+  for (byte i = xSmallest; i <= xLargest; i++) {
+    for (byte j = ySmallest; j <= yLargest; j++) {
+      for (byte k = zSmallest; k <= zLargest; k++) {
+        float x1p = x1 - i, y1p = y1 - j, z1p = z1 - k;
+
+        float t = -(x1p*x12 + y1p*y12 + z1p*z12) * lDist_inv;
+
+        // if the projection onto the line is beyond the endpoints
+        if (t <= -1.0 || t-lDist >= 1.0)
+          continue;
+
+        // compute distance to unbounded line
+        float xCross = y12 * z1p - z12 * y1p;
+        float yCross = x12 * z1p - z12 * x1p;
+        float zCross = x12 * y1p - y12 * x1p;
+
+        float distSqr = (sqr(xCross) + sqr(yCross) + sqr(zCross)) * lDistSqr_inv;
+
+        if (distSqr >= 1.0)
+          continue;
+        // The pixel is near the line
+
+        if (t < 0.0) {
+          distSqr = sqr(x1p) + sqr(y1p) + sqr(z1p);
+          if (distSqr >= 1.0)
+            continue;
+        }
+        else if (t-lDist > 0.0) {
+          distSqr = sqr(x2 - i) + sqr(y2 - j) + sqr(z2 - k);
+          if (distSqr >= 1.0)
+            continue;
+        }
+
+        byte brightness = byte( 256.0 - 255.0 * sqrt(distSqr) );
+        leds[ getIndex(i, j, k) ] = CRGB( scale8(color.r, brightness), scale8(color.g, brightness), scale8(color.b, brightness) );
+      }
+    }
+  }
+}
+
 
 // unused after gamma correction - also is pretty inefficient
 // byte mapBrightness(float input) {
