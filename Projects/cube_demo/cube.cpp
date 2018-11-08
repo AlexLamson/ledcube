@@ -276,7 +276,7 @@ void drawLine(float x1, float y1, float z1, float x2, float y2, float z2, CRGB c
         }
 
         byte brightness = byte( 256.0 - 255.0 * sqrt(distSqr) );
-        leds[ getIndex(i, j, k) ] = CRGB( scale8(color.r, brightness), scale8(color.g, brightness), scale8(color.b, brightness) );
+        leds[ getIndex(i, j, k) ] += CRGB( scale8(color.r, brightness), scale8(color.g, brightness), scale8(color.b, brightness) );
       }
     }
   }
