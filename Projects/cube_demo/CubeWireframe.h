@@ -5,18 +5,18 @@
  *      Author: Chris Raff
  */
 
-#ifndef LINESPINNING_H_
-#define LINESPINNING_H_
+#ifndef CUBEWIREFRAME_H_
+#define CUBEWIREFRAME_H_
 
 #include "Demo.h"
 
-class LineSpinning: public Demo {
+class CubeWireframe: public Demo {
 private:
   float angle;
 public:
-  LineSpinning();
+  CubeWireframe();
   void initialize();
   void tick();
 };
 
-#endif /* LINESPINNING_H_ */
+#endif /* CUBEWIREFRAME_H_ */

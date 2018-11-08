@@ -36,6 +36,7 @@
 #include "SpheresIntersectingBigger.h"
 #include "Rain.h"
 #include "BallsBouncing.h"
+#include "CubeWireframe.h"
 
 const byte tickMillis = 20;
 unsigned long lastTickTime = 0;
@@ -43,7 +44,7 @@ unsigned long lastDemoTime = 0;
 
 byte demoMode = 0;
 bool advanceDemo = true;
-const byte numDemos = 13;
+const byte numDemos = 14;
 Demo* demos[ numDemos ] = {
     new ColorSphere(),
     new Wander(),
@@ -57,7 +58,8 @@ Demo* demos[ numDemos ] = {
     new SpheresIntersecting(),
     new SpheresIntersectingBigger(),
     new Rain(),
-    new BallsBouncing()
+    new BallsBouncing(),
+    new CubeWireframe()
 };
 
 void setup()
