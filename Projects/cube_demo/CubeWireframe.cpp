@@ -28,7 +28,7 @@ void CubeWireframe::tick() {
   float cosa = cos(angle), sina = sin(angle);
 
   CRGB color = CRGB(0, 128, 255);
-  float size_2 = 3.0;
+  float size_2 = 3.5355339059327;
 
   float q1x = + size_2 * cosa;
   float q1y = + size_2 * sina;
