@@ -60,6 +60,13 @@ float sinf(float theta) {
 float randomf() {
   return float( random(256) ) * inv255;
 }
+// overloaded convenient functions with more types
+int max(int a, int b) {
+  return (a>b ? a : b);
+}
+int min(int a, int b) {
+  return (a<b ? a : b);
+}
 
 // convenience functions
 int getIndex(int x, int y, int z) {
@@ -242,9 +249,9 @@ void drawLine(float x1, float y1, float z1, float x2, float y2, float z2, CRGB c
   float lDist_inv = 1.0 / lDist;
   float lDistSqr_inv = 1.0 / lDistSqr;
 
-  for (byte i = xSmallest; i <= xLargest; i++) {
-    for (byte j = ySmallest; j <= yLargest; j++) {
-      for (byte k = zSmallest; k <= zLargest; k++) {
+  for (byte i = max(xSmallest, 0); i <= min(7, xLargest); i++) {
+    for (byte j = max(ySmallest, 0); j <= min(7, yLargest); j++) {
+      for (byte k = max(zSmallest, 0); k <= min(7, zLargest); k++) {
         float x1p = x1 - i, y1p = y1 - j, z1p = z1 - k;
 
         float t = -(x1p*x12 + y1p*y12 + z1p*z12) * lDist_inv;

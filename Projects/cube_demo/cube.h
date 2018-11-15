@@ -43,6 +43,9 @@ byte getZ(int);
 
 void setColor(CRGB);
 
+int max(int, int);
+int min(int, int);
+
 CRGB scaleColor(CRGB color, byte brightness);
 
 // cube drawing functions
