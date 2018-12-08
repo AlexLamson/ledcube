@@ -1,6 +1,12 @@
 LED cube visualizations (in no particular order)
 ================================================
 
+a spiral, but in the style of the data snake
+fireplace
+plasma
+platformer
+minesweeper
+
 use the wifi somehow
 	allow people to remotely change the demos via the internet / over the local network
 	scroll tweets
@@ -14,8 +20,6 @@ trace a 3d path similar to https://youtu.be/6mXM-oGggrM?t=2m50s
 temperature sensor visualized
 
 guitar hero
-
-3d snake
 
 slide symbols in
 	arbitrary text (ex. "hello world", letter by letter)
@@ -33,8 +37,6 @@ make cube show current amp draw
 	change color of each LED by how much current it used over time
 graph the ram requirements of different neopixel strips sizes for the sake of finding out if  we have enough ram
 
-fireplace
-
 use ultrasonic sensor to slice down through volumetric object
 
 anti-aliasing (but actually it's just edge smoothing)
@@ -47,8 +49,7 @@ color tests
 	make the ground plane be a hue circle and the gravity axis be saturation/brightness (brighter on bottom) (and rotate the hue circle about the gravity axis)
 	rainbow from one corner to the opposite corner
 
-make a sphere
-	draw a sphere, that's the earth
+draw an earth
 
 3D tetris
 	make 2x2x2 region be a single block
@@ -60,16 +61,3 @@ fireworks
 pulsing pink heart
 
 bouncingballs.ino, but with a single LED light moving around, bouncing off the walls in 3d
-
-spectrum analyzer
-	make each row an octave
-
-3D function plotter
-4D function plotter - using hue
-5D function plotter - using time
-
-falling "raindrops" OR Enter the Matrix falling green things kinda thing
-
-random pastel colors with some off
-
-wandering dot project, but in 3d
