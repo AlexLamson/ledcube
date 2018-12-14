@@ -10,10 +10,58 @@
 
 #include <FastLED.h>
 #include "cube.h"
+//#include "geometry/AxisAngleRotation.h"
 
 CubeWireframe::CubeWireframe() {
   duration = 25000;
   angle = 0;
+
+//  rot = new AxisAngleRotation();
+//  rot->setAxis({0, 0, 1});
+//  rot->setAngle(0.02);
+
+//  const float a = 1.0, b = 6.0;
+//
+//  float3 temp[24] = {
+//      {a, a, a},
+//      {a, a, b},
+//
+//      {a, a, b},
+//      {a, b, b},
+//
+//      {a, b, b},
+//      {a, b, a},
+//
+//      {a, b, a},
+//      {a, a, a},
+//
+//
+//      {b, a, a},
+//      {b, a, b},
+//
+//      {b, a, b},
+//      {b, b, b},
+//
+//      {b, b, b},
+//      {b, b, a},
+//
+//      {b, b, a},
+//      {b, a, a},
+//
+//
+//      {a, a, a},
+//      {b, a, a},
+//
+//      {a, a, b},
+//      {b, a, b},
+//
+//      {a, b, a},
+//      {b, b, a},
+//
+//      {a, b, b},
+//      {b, b, b}
+//  };
+//  for (int i = 0; i < 24; i++) verts[i] = temp[i];
 }
 
 void CubeWireframe::initialize() {
@@ -23,12 +71,29 @@ void CubeWireframe::initialize() {
 void CubeWireframe::tick() {
   FastLED.clear();
 
+//  for (int i = 0; i < 24; i++) {
+//    verts[i].x -= 3.5;
+//    verts[i].y -= 3.5;
+//    verts[i].z -= 3.5;
+//
+//    rot->apply(verts[i], &(verts[i]));
+//
+//    verts[i].x += 3.5;
+//    verts[i].y += 3.5;
+//    verts[i].z += 3.5;
+//  }
+//
+//  drawLineList(verts, 24, CRGB(0, 128, 255));
+//}
+
   angle += 0.02;
 
-  float cosa = cos(angle), sina = sin(angle);
+//  rot.setAngle(angle);
 
   CRGB color = CRGB(0, 128, 255);
   float size_2 = 3.5355339059327;
+
+  float cosa = cos(angle), sina = sin(angle);
 
   float q1x = + size_2 * cosa;
   float q1y = + size_2 * sina;
