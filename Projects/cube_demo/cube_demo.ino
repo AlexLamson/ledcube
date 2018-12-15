@@ -9,10 +9,19 @@
 // #define DATA3 4  // D4
 
 // pins for wemos d1 mini
-#define DATA0 5  // D1
-#define DATA1 4  // D2
-#define DATA2 0  // D3
-#define DATA3 2  // D4
+#ifndef DATA_
+#define DATA_
+
+//#define DATA0 5  // D1
+//#define DATA1 4  // D2
+//#define DATA2 0  // D3
+//#define DATA3 2  // D4
+#define DATA0 16 // D1
+#define DATA1 17  // D2
+#define DATA2 21  // D3
+#define DATA3 22  // D4
+
+#endif // DATA_
 
 // pins for arduino uno
 // #define DATA0 7
@@ -37,7 +46,11 @@
 #include "Rain.h"
 #include "BallsBouncing.h"
 #include "CubeWireframe.h"
+#include "Helix.h"
+#include "Snow.h"
+#include "MetaBalls.h"
 #include "Fireplace.h"
+
 
 const byte tickMillis = 20;
 unsigned long lastTickTime = 0;
@@ -45,7 +58,7 @@ unsigned long lastDemoTime = 0;
 
 byte demoMode = 0;
 bool advanceDemo = true;
-const byte numDemos = 14;
+const byte numDemos = 15;
 Demo* demos[ numDemos ] = {
     new ColorSphere(),
     new Wander(),
@@ -53,15 +66,18 @@ Demo* demos[ numDemos ] = {
     new ColorSphereTrimmed(),
     new RGBSpaceBounce(),
     new DataSnake(),
+    new MetaBalls(),
     new ColorCone(),
     new SpheresSpinning(),
-    new PointField(),
-    new SpheresIntersecting(),
+//    new PointField(),
     new SpheresIntersectingBigger(),
+    new Helix(),
+    new SpheresIntersecting(),
     new Rain(),
     new BallsBouncing(),
     new CubeWireframe(),
-    new Fireplace()
+    new Fireplace(),
+    new Snow()
 };
 
 void setup()
@@ -99,6 +115,10 @@ void loop()
       unsigned long computeTime = micros() - computeStartTime;
       Serial.println(computeTime);
 
+
+      const unsigned long drawStartTime = micros();
       FastLED.show();
+      unsigned long drawTime = micros() - drawStartTime;
+      Serial.println(drawTime);
   }
 }
