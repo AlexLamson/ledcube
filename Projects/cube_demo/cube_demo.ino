@@ -59,7 +59,7 @@ unsigned long lastDemoTime = 0;
 byte demoMode = 0;
 bool advanceDemo = true;
 const byte numDemos = 15;
-Demo* demos[ numDemos ] = {
+Demo* demos[] = {
     new ColorSphere(),
     new Wander(),
     new FunctionRipple(),
