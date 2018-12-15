@@ -7,7 +7,7 @@
 
 #include <FastLED.h>
 
-extern CRGB leds[];
+extern CRGB *leds;
 
 void cubeBegin();
 
@@ -40,6 +40,8 @@ byte getX(int);
 byte getY(int);
 
 byte getZ(int);
+
+boolean inCubeBounds(int, int, int);
 
 void setColor(CRGB);
 

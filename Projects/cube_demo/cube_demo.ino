@@ -37,6 +37,7 @@
 #include "Rain.h"
 #include "BallsBouncing.h"
 #include "CubeWireframe.h"
+#include "Fireplace.h"
 
 const byte tickMillis = 20;
 unsigned long lastTickTime = 0;
@@ -59,7 +60,8 @@ Demo* demos[ numDemos ] = {
     new SpheresIntersectingBigger(),
     new Rain(),
     new BallsBouncing(),
-    new CubeWireframe()
+    new CubeWireframe(),
+    new Fireplace()
 };
 
 void setup()

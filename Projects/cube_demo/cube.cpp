@@ -21,9 +21,10 @@
 #define DATA3 2  // wemos D1 mini D4
 #endif
 
-CRGB leds[512];
+CRGB *leds;
 
 void cubeBegin() {
+  leds = (CRGB *)malloc(sizeof(CRGB)*512);
   FastLED.addLeds<WS2812B, DATA0>(leds, 0,   128);
   FastLED.addLeds<WS2812B, DATA1>(leds, 128, 128);
   FastLED.addLeds<WS2812B, DATA2>(leds, 256, 128);
@@ -87,6 +88,10 @@ byte getY(int i) {
 
 byte getZ(int i) {
   return byte(i % 8);
+}
+
+boolean inCubeBounds(int x, int y, int z) {
+  return (x >= 0 && y >= 0 && z >= 0 && x < 8 && y < 8 && z < 8);
 }
 
 void setColor(CRGB color) {
