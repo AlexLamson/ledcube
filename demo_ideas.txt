@@ -61,3 +61,9 @@ fireworks
 pulsing pink heart
 
 bouncingballs.ino, but with a single LED light moving around, bouncing off the walls in 3d
+
+A helix where only the two points on the outer edges of the helix are lit
+
+Droplets falling and causing ripples when they hit the bottom
+
+Pong 2d paddles with joysticks
