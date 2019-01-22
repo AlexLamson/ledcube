@@ -1,46 +1,47 @@
 LED cube visualizations (in no particular order)
 ================================================
 
+VISUALIZATIONS
+--------------
 a spiral, but in the style of the data snake
 fireplace
 plasma
+draw an earth
+clock
+fireworks
+pulsing pink heart
+bouncingballs.ino, but with a single LED light moving around, bouncing off the walls in 3d
+a helix where only the two points on the outer edges of the helix are lit
+droplets falling and causing ripples when they hit the bottom
+
+
+GAMES
+-----
 platformer
 minesweeper
+3D tetris (make 2x2x2 region be a single block)
+Pong 2d paddles with joysticks
+guitar hero
 
+
+SENSORS
+-------
+temperature sensor visualized
+use ultrasonic sensor to slice down through volumetric object
 use the wifi somehow
 	allow people to remotely change the demos via the internet / over the local network
 	scroll tweets
 	visualize the weather (AKA fully commit to becoming a weather cube)
+
 
 trace a 3d path similar to https://youtu.be/6mXM-oGggrM?t=2m50s
 	the hue can change over time to it's easier to see the path
 	the path should be aprox smooth (maybe just like add a random velocity every tick and have it move according to acceleration or something)
 	(also take care not to go beyond walls)
 
-temperature sensor visualized
-
-guitar hero
-
-slide symbols in
-	arbitrary text (ex. "hello world", letter by letter)
-	heart, peace, anchor, down arrow, dollar sign, raindrop, crown, star, horseshoe, crescent moon, diamond, plus, O
-
-show image when the cube is looked at from a certain angle
-	use processing sketch to provide webcam feed?
-
 infinite texture to drive on using perlin noise on each color channel
 	ultrasonic sensor gas pedal
 	this but with no car and it's always moving (but the noise is height instead of just color)
-
-make display show current amp draw
-make cube show current amp draw
-	change color of each LED by how much current it used over time
-graph the ram requirements of different neopixel strips sizes for the sake of finding out if  we have enough ram
-
-use ultrasonic sensor to slice down through volumetric object
-
-anti-aliasing (but actually it's just edge smoothing)
-
 
 color tests
 	make x edge red, make y (vertical) edge green, make z edge blue
@@ -48,22 +49,3 @@ color tests
 		also but with HSV
 	make the ground plane be a hue circle and the gravity axis be saturation/brightness (brighter on bottom) (and rotate the hue circle about the gravity axis)
 	rainbow from one corner to the opposite corner
-
-draw an earth
-
-3D tetris
-	make 2x2x2 region be a single block
-
-clock
-
-fireworks
-
-pulsing pink heart
-
-bouncingballs.ino, but with a single LED light moving around, bouncing off the walls in 3d
-
-A helix where only the two points on the outer edges of the helix are lit
-
-Droplets falling and causing ripples when they hit the bottom
-
-Pong 2d paddles with joysticks
