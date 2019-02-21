@@ -35,22 +35,27 @@ void MetaBalls::tick() {
         int i = getIndex(x, y, z);
 
         float dist = 0;
-        float min_ = 10000000, max_ = 0;
+        // float min_ = 10000000, max_ = 0;
         for (byte b = 0; b < numBalls; b++) {
           float dx = balls[b].position.x - x;
           float dy = balls[b].position.y - y;
           float dz = balls[b].position.z - z;
 
-          dist += balls[b].radius / (0.75f + sqrt(sqr(dx) + sqr(dy) + sqr(dz)));
-          if (dist > max_) {
-            max_ = dist;
-          }
-          if (dist < min_) {
-            min_ = dist;
-          }
+          dist += balls[b].radius / (0.75f + sqrt(sqr(dx) + sqr(dy) + sqr(dz))); // traditional - works ok with radii around 300
+          // dist += balls[b].radius * sqrt(sqr(dx) + sqr(dy) + sqr(dz));
+          
+          // if (dist > max_) {
+          //   max_ = dist;
+          // }
+          // if (dist < min_) {
+          //   min_ = dist;
+          // }
         }
 
-        leds[i] = CHSV(byte(dist), 255, 128);
+        byte hue = 130 - byte( min(dist, 300) );
+        byte intensity = 10 * (max( min(dist, 175), 150 ) - 150);
+
+        leds[i] = CHSV(hue, 255, intensity);
       }
     }
   }
@@ -64,7 +69,7 @@ MetaBalls::Ball::Ball() {
 }
 
 void MetaBalls::Ball::init() {
-  radius = 300.0f ;//+ randomf() * 1500.0f;
+  radius = 300.0f; // 16.0f + randomf() * 16.0f;
 
   position = {
       randomf() * 8.0f,
