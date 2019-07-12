@@ -22,7 +22,7 @@
 #define DATA3 22  // D4
 
 #define BUTTON 14 // D5
-#define BUTTON_LOW 12 // D6
+#define BUTTON_LOW 12 // D6, in case you can't easily connect to ground
 
 #endif // DATA_
 
@@ -61,38 +61,44 @@ unsigned long lastDemoTime = 0;
 
 bool lastButtonState = true; // true means not pressed
 const byte buttonDebounceTime = 50;
+const int buttonHoldTime = 500; // hold the button to go back a demo
 unsigned long lastButtonTime = 0;
 
 byte demoMode = 0;
 bool advanceDemo = true;
 const byte numDemos = 13;
 Demo* demos[] = {
-    new ColorSphere(),
-    new Wander(),
-    new FunctionRipple(),
-    new ColorSphereTrimmed(),
-    new RGBSpaceBounce(),
-    new DataSnake(),
-    new MetaBalls(),
-    new ColorCone(),
-    new SpheresSpinning(),
-//    new PointField(),
-    new SpheresIntersectingBigger(),
-    new Helix(),
-    new SpheresIntersecting(),
-    new Rain(),
-    new BallsBouncing(),
-    new CubeWireframe(),
-    new Fireplace(),
-    new Snow()
+    new ColorSphere(), // 10
+    new FunctionRipple(), // 9
+    new MetaBalls(), // 8
+    new SpheresSpinning(), // 7
+    new CubeWireframe(), // 7
+    new ColorSphereTrimmed(), // 7
+    new Helix(), // 6
+    new SpheresIntersecting(), // 5
+    new DataSnake(), // 4
+    new BallsBouncing(), // 7
+    new ColorCone(), // 5
+    new Wander(), // 3
+    new Rain(), // 3
+    // new RGBSpaceBounce(),
+    // new PointField(),
+    // new SpheresIntersectingBigger(),
+    // new Fireplace(),
+    // new Snow()
 };
 
-void nextDemo()
+void nextDemo(int num = 1)
 {
     lastDemoTime = millis();
+
+    int tempDemoMode = demoMode; // if the number is negative, demoMode won't wrap around correctly
   
-    demoMode++;
-    demoMode = demoMode % numDemos;
+    tempDemoMode += num;
+    while (tempDemoMode < 0) {
+      tempDemoMode += numDemos;
+    }
+    demoMode = tempDemoMode % numDemos;
 
     demos[demoMode]->initialize();
 }
@@ -116,21 +122,28 @@ void setup()
 
 void loop()
 {
-  // check if the demo should be advanced
-  boolean demoRanOutOfTime = millis() >= lastDemoTime + demos[demoMode]->duration && advanceDemo;
-  boolean buttonWasClicked = false;
+  // button logic
   boolean buttonState = digitalRead(BUTTON);
   if (buttonState != lastButtonState && millis() >= lastButtonTime + buttonDebounceTime) {
     lastButtonState = buttonState;
-    lastButtonTime = millis();
 
-    // if the button was pressed (not released), the demo can be advanced
-    if (!buttonState) {
-      buttonWasClicked = true;
+    // if the button was released, the demo can be advanced
+    if (buttonState) {
+      // normal button press - advance the demo
+      if (millis() - lastButtonTime < buttonHoldTime) {
+        nextDemo();
+      }
+      // if the button was held, move back 1 demo
+      else {
+        nextDemo(-1);
+      }
     }
+    
+    lastButtonTime = millis();
   }
-  
-  if (demoRanOutOfTime || buttonWasClicked) {
+
+  // if the demo has ran long enough, move to the next one
+  if (millis() >= lastDemoTime + demos[demoMode]->duration && advanceDemo) {
     nextDemo();
   }
   
