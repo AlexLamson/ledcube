@@ -10,6 +10,7 @@
 
 #include "Demo.h"
 #include <FastLED.h>
+#include "Arduino.h"
 
 class Wander: public Demo {
 private:
@@ -17,7 +18,7 @@ private:
   {
   public:
     Wanderer();
-    void init();
+    void init(byte);
     void tick();
 
     float x, y, z, dx, dy, dz;

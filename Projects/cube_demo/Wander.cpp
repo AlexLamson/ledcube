@@ -8,16 +8,18 @@
 #include "Wander.h"
 #include <FastLED.h>
 #include "cube.h"
+#include "Arduino.h"
 
 const float momentum = 0.98;
-const float fade_factor = 0.99;
+const float fadeFactor = 0.99;
+const float movementSpeedMultiplier = 0.05;
 
 // Wanderer particle logic
 Wander::Wanderer::Wanderer() {
-  init();
+  init(random(255));
 }
 
-void Wander::Wanderer::init() {
+void Wander::Wanderer::init(byte hue) {
   x = 3.5;
   y = 3.5;
   z = 3.5;
@@ -26,14 +28,14 @@ void Wander::Wanderer::init() {
   dy = 0;
   dz = 0;
 
-  color = CHSV( random(256), 255, 100 );
+  color = CHSV( hue, 255, 100 );
 }
 
 void Wander::Wanderer::tick() {
   // ought to be done as a random vector but that's effort for a later date
-  dx += (randomf() - 0.5) * 0.03;
-  dy += (randomf() - 0.5) * 0.03;
-  dz += (randomf() - 0.5) * 0.03;
+  dx += (randomf() - 0.5) * movementSpeedMultiplier;
+  dy += (randomf() - 0.5) * movementSpeedMultiplier;
+  dz += (randomf() - 0.5) * movementSpeedMultiplier;
 
   dx *= momentum;
   dy *= momentum;
@@ -61,16 +63,19 @@ Wander::Wander() {
 void Wander::initialize() {
   FastLED.clear();
 
+  byte hue = random(255);
+
   for (byte i = 0; i < numWanderers; i++) {
-    wanderers[i].init();
+    wanderers[i].init(hue);
+    hue += 256 / numWanderers;
   }
 }
 
 void Wander::tick() {
   for (int i = 0; i < 512; i++) {
-    leds[i].r *= fade_factor;
-    leds[i].g *= fade_factor;
-    leds[i].b *= fade_factor;
+    leds[i].r *= fadeFactor;
+    leds[i].g *= fadeFactor;
+    leds[i].b *= fadeFactor;
   }
 
   for (int i = 0; i < numWanderers; i++) {
