@@ -21,6 +21,9 @@
 #define DATA2 21  // D3
 #define DATA3 22  // D4
 
+#define BUTTON 14 // D5
+#define BUTTON_LOW 12 // D6
+
 #endif // DATA_
 
 // pins for arduino uno
@@ -56,9 +59,13 @@ const byte tickMillis = 20;
 unsigned long lastTickTime = 0;
 unsigned long lastDemoTime = 0;
 
+bool lastButtonState = true; // true means not pressed
+const byte buttonDebounceTime = 50;
+unsigned long lastButtonTime = 0;
+
 byte demoMode = 0;
 bool advanceDemo = true;
-const byte numDemos = 15;
+const byte numDemos = 13;
 Demo* demos[] = {
     new ColorSphere(),
     new Wander(),
@@ -80,9 +87,23 @@ Demo* demos[] = {
     new Snow()
 };
 
+void nextDemo()
+{
+    lastDemoTime = millis();
+  
+    demoMode++;
+    demoMode = demoMode % numDemos;
+
+    demos[demoMode]->initialize();
+}
+
 void setup()
 {
   Serial.begin(115200);
+
+  pinMode(BUTTON, INPUT_PULLUP);
+  pinMode(BUTTON_LOW, OUTPUT);
+  digitalWrite(BUTTON_LOW, LOW);
 
   cubeBegin();
 
@@ -95,30 +116,41 @@ void setup()
 
 void loop()
 {
-  if (millis() >= lastDemoTime + demos[demoMode]->duration && advanceDemo) {
-    lastDemoTime = millis();
+  // check if the demo should be advanced
+  boolean demoRanOutOfTime = millis() >= lastDemoTime + demos[demoMode]->duration && advanceDemo;
+  boolean buttonWasClicked = false;
+  boolean buttonState = digitalRead(BUTTON);
+  if (buttonState != lastButtonState && millis() >= lastButtonTime + buttonDebounceTime) {
+    lastButtonState = buttonState;
+    lastButtonTime = millis();
 
-    // advance demo
-    demoMode++;
-    demoMode = demoMode % numDemos;
-
-    demos[demoMode]->initialize();
+    // if the button was pressed (not released), the demo can be advanced
+    if (!buttonState) {
+      buttonWasClicked = true;
+    }
   }
-
+  
+  if (demoRanOutOfTime || buttonWasClicked) {
+    nextDemo();
+  }
+  
+  // if enough time has passed, compute and draw the next frame
   if (millis() >= lastTickTime + tickMillis) {
       lastTickTime = millis();
 
+      // have the demo draw the image
       const unsigned long computeStartTime = micros();
 
       demos[demoMode]->tick();
 
       unsigned long computeTime = micros() - computeStartTime;
-      Serial.println(computeTime);
+//      Serial.println(computeTime);
 
 
+      // push image to cube
       const unsigned long drawStartTime = micros();
       FastLED.show();
       unsigned long drawTime = micros() - drawStartTime;
-      Serial.println(drawTime);
+//      Serial.println(drawTime);
   }
 }
