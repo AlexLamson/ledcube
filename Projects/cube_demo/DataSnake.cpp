@@ -10,7 +10,7 @@
 #include "cube.h"
 
 DataSnake::DataSnake() {
-  duration = 21000;
+  duration = 20450;
   frame = 0;
 }
 
