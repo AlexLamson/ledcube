@@ -23,6 +23,8 @@ private:
   unsigned long lastUpdateTime;
   byte waitTime;
 
+  void randomizeRules();
+
 public:
   CellularAutomata();
   void initialize();

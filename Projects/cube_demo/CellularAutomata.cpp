@@ -21,6 +21,7 @@ CellularAutomata::CellularAutomata() {
   memset(survival, false, 27);
   memset(birth, false, 27);
 
+  // some decent rules, if rules aren't being randomized
   maxCellStates = 10;
   for (byte i = 4; i < 8; i++)
     survival[i] = true;
@@ -28,8 +29,23 @@ CellularAutomata::CellularAutomata() {
     birth[i] = true;
 }
 
+void CellularAutomata::randomizeRules() {
+  memset(survival, false, 27);
+  memset(birth, false, 27);
+
+  maxCellStates = 2 + random(8);
+  for (byte i = 0; i < 27; i++) {
+    if (random(3) == 0)
+      survival[i] = true;
+    if (random(3) == 0)
+      birth[i] = true;
+  }
+}
+
 void CellularAutomata::initialize() {
   memset(cells, 0, 512);
+
+  randomizeRules();
 
   // initialize some cells
   for (byte i = 2; i <= 5; i++) {
@@ -65,6 +81,8 @@ void CellularAutomata::tick() {
   lastUpdateTime = millis();
 
   FastLED.clear();
+
+  bool allDead = true; // as we update, check if all the cells have died
 
   for (byte i = 0; i < 8; i++) {
     for (byte j = 0; j < 8; j++) {
@@ -107,9 +125,11 @@ void CellularAutomata::tick() {
           newValue = 1;
         }
 
-        // if there is cell here, draw it
+        // if there is a cell here, draw it
         if (newValue > 0) {
           leds[getIndex(i, j, k)] = CHSV(127 + 127 * newValue / maxCellStates, 255, 127);
+
+          allDead = false;
         }
 
         // pack the values
@@ -123,4 +143,8 @@ void CellularAutomata::tick() {
   }
 
   rhs = !rhs;
+
+  if (allDead) {
+    initialize();
+  }
 }
