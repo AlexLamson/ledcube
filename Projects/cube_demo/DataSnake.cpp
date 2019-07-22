@@ -26,7 +26,7 @@ void DataSnake::tick() {
   if (frame < 512)
     leds[frame] = CHSV( int(1.0*frame/512*255), 255, 192);
   else
-  leds[frame%512] = 0x0; // clear
+    leds[frame%512] = 0x0; // clear
 
   frame = (frame+1) % 1024;
 }
