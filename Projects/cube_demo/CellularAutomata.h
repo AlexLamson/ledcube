@@ -20,6 +20,9 @@ private:
 
   bool rhs; // true when the "previous" cell value is on the right 4 bits of the byte
 
+  unsigned long lastUpdateTime;
+  byte waitTime;
+
 public:
   CellularAutomata();
   void initialize();

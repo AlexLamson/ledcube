@@ -12,6 +12,9 @@
 CellularAutomata::CellularAutomata() {
   duration = 20000;
 
+  lastUpdateTime = 0;
+  waitTime = 100;
+
   rhs = true;
 
   // initialize rules
@@ -56,6 +59,11 @@ byte unpackNextValue(byte cell, bool rhs) {
 }
 
 void CellularAutomata::tick() {
+  if (millis() - lastUpdateTime <= waitTime)
+    return;
+
+  lastUpdateTime = millis();
+
   FastLED.clear();
 
   for (byte i = 0; i < 8; i++) {
@@ -101,7 +109,7 @@ void CellularAutomata::tick() {
 
         // if there is cell here, draw it
         if (newValue > 0) {
-          leds[getIndex(i, j, k)] = CHSV(255 * newValue / maxCellStates, 255, 127);
+          leds[getIndex(i, j, k)] = CHSV(127 + 127 * newValue / maxCellStates, 255, 127);
         }
 
         // pack the values
