@@ -2,35 +2,10 @@
 #define FASTLED_ALLOW_INTERRUPTS 0
 #include <FastLED.h>
 
-// pins for wemos d1
-// #define DATA0 13 // D7
-// #define DATA1 12 // D6
-// #define DATA2 14 // D5
-// #define DATA3 4  // D4
-
-// pins for wemos d1 mini
-#ifndef DATA_
-#define DATA_
-
-//#define DATA0 5  // D1
-//#define DATA1 4  // D2
-//#define DATA2 0  // D3
-//#define DATA3 2  // D4
-#define DATA0 16 // D1
-#define DATA1 17  // D2
-#define DATA2 21  // D3
-#define DATA3 22  // D4
+// pins for output are defined in cube.cpp
 
 #define BUTTON 14 // D5
 #define BUTTON_LOW 12 // D6, in case you can't easily connect to ground
-
-#endif // DATA_
-
-// pins for arduino uno
-// #define DATA0 7
-// #define DATA1 6
-// #define DATA2 5
-// #define DATA3 4
 
 #include "cube.h"
 
@@ -85,6 +60,7 @@ Demo* demos[] = {
     // new PointField(),
     // new SpheresIntersectingBigger(),
     // new Fireplace(),
+    // new CellularAutomata(),
     // new Snow()
 };
 
@@ -93,7 +69,7 @@ void nextDemo(int num = 1)
     lastDemoTime = millis();
 
     int tempDemoMode = demoMode; // if the number is negative, demoMode won't wrap around correctly
-  
+
     tempDemoMode += num;
     while (tempDemoMode < 0) {
       tempDemoMode += numDemos;
@@ -138,7 +114,7 @@ void loop()
         nextDemo(-1);
       }
     }
-    
+
     lastButtonTime = millis();
   }
 
@@ -146,7 +122,7 @@ void loop()
   if (millis() >= lastDemoTime + demos[demoMode]->duration && advanceDemo) {
     nextDemo();
   }
-  
+
   // if enough time has passed, compute and draw the next frame
   if (millis() >= lastTickTime + tickMillis) {
       lastTickTime = millis();
