@@ -29,6 +29,8 @@ void cubeBegin() {
   FastLED.addLeds<WS2812B, DATA1>(leds, 128, 128);
   FastLED.addLeds<WS2812B, DATA2>(leds, 256, 128);
   FastLED.addLeds<WS2812B, DATA3>(leds, 384, 128);
+
+  FastLED.setMaxPowerInVoltsAndMilliamps(5, 20000);
 }
 
 // math
