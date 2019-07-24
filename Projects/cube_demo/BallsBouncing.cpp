@@ -43,14 +43,14 @@ void BallsBouncing::Ball::init() {
   radius = 0.5f + randomf() * 1.0f;
 
   position = {
-      randomf() * 6.0f + 1.0f,
       10.0f + radius,
+      randomf() * 6.0f + 1.0f,
       5.0f + 3.0f * randomf()
   };
 
   speed = {
-      0.0,
       -0.06f - randomf() * 0.03f,
+      0.0,
       -(position.z - 6.5f) * 0.01f
   };
 
@@ -69,7 +69,7 @@ void BallsBouncing::Ball::tick() {
     speed.z = -speed.z * 0.8f;
   }
 
-  if (position.y < - radius - 2.0) {
+  if (position.x < - radius - 2.0) {
     init();
   }
 
