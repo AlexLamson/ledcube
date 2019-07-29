@@ -13,7 +13,7 @@ pulsing pink heart
 bouncingballs.ino, but with a single LED light moving around, bouncing off the walls in 3d
 a helix where only the two points on the outer edges of the helix are lit
 droplets falling and causing ripples when they hit the bottom
-
+spheres appear in random locations
 
 GAMES
 -----
@@ -22,6 +22,7 @@ minesweeper
 3D tetris (make 2x2x2 region be a single block)
 Pong 2d paddles with joysticks
 guitar hero
+space invaders
 
 
 SENSORS
