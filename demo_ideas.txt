@@ -13,7 +13,8 @@ pulsing pink heart
 bouncingballs.ino, but with a single LED light moving around, bouncing off the walls in 3d
 a helix where only the two points on the outer edges of the helix are lit
 droplets falling and causing ripples when they hit the bottom
-spheres appear in random locations
+overlapping spheres appear in random locations
+show a plane rotating randomly
 
 GAMES
 -----
@@ -27,6 +28,10 @@ space invaders
 
 SENSORS
 -------
+kinect
+	render the depth to the cube using same technique as the webcam
+	draw a 3D stick figure that matches your movements
+
 temperature sensor visualized
 use ultrasonic sensor to slice down through volumetric object
 use the wifi somehow
