@@ -1,8 +1,8 @@
 /*
  * Fireworks.h
  *
- *  Created on: Nov 2, 2018
- *      Author: Chris Raff
+ *  Created on: Dec 7, 2019
+ *      Author: Alex Lamson
  */
 
 #ifndef Fireworks_H_
