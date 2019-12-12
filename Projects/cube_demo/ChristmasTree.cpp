@@ -12,7 +12,7 @@
 #include "cube.h"
 
 ChristmasTree::ChristmasTree() {
-  duration = 25000;
+  duration = 10000;
 }
 
 void ChristmasTree::initialize() {
